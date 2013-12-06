@@ -1,4 +1,4 @@
-Skydoop
-=======
+MapReduceFramework
+==================
 
-A Map Reduce facility specially for answering Probabilistic Skyline Query
+A Map/Reduce computation framework based on NFS
