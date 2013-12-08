@@ -28,7 +28,6 @@ public class ReducerWorker extends Worker {
       if (this.scanner.hasNext()) {
         String line = this.scanner.nextLine();
         String[] fields = line.split("\t");
-		System.out.println("key= " + fields[0] + "  value = " + fields[1]);
         this.next = new Record(fields[0], fields[1]);
       } else {
         this.next = null;

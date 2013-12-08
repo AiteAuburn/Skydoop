@@ -13,7 +13,9 @@ public class WCReducer extends Reducer {
     long sum = 0;
     
     while(values.hasNext()) {
-      sum += Long.parseLong(values.next());
+      //sum += Long.parseLong(values.next());
+	  values.next();
+	  sum += 1;
     }
     
     out.collect(key, Long.toString(sum));

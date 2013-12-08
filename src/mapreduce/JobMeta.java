@@ -138,6 +138,7 @@ public class JobMeta {
     List<InputBlock> result = new ArrayList<InputBlock>();
 
     long len = file.length();
+	System.out.println("blockSize = "+ this.blockSize + "   len = "+ len);
     long offset = 0;
     while (len > 0) {
       if (len > (this.blockSize + this.blockSize / 2)) {

@@ -7,20 +7,15 @@ import ProbSkyline.SkyClient;
 
 public class WCMapper extends Mapper {
 
-	public static ClusterConfig CC;
-	static{
-		CC = new ClusterConfig();
-	}
-
 	@Override
 	public void map(String key, String value, Outputer out) {
 		String line = value;
 		String partition = computeKey(line);
-		out.collect("1", line);
+		out.collect(partition, line);
 	}
 
 	public String computeKey(String line){
-		Client
-		return null;	
+		SkyClient client = new SkyClient(ClusterConfig.getInstance(), line);
+		return Integer.toString(client.getPartition());	
 	}
 }

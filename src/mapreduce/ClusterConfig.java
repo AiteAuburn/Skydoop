@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 /**
- * This class holds the configurations for the cluster 
- * @author mayank
+ * This class holds the configurations for the cluster.
+ * 
+ * Singleton pattern is utilized for this class to guarantee only one instance.
+ * @author liang 
  */
 public class ClusterConfig implements Serializable{
 
@@ -30,15 +32,22 @@ public class ClusterConfig implements Serializable{
 	public int numDiv;
 	transient static final int MaxSplitNum = 10;
 	
+	private static final ClusterConfig CC = new ClusterConfig();
+
 	public ClusterConfig(String configFile) {
 		this.configFile = configFile;
 		parseConfigFile();
 	}
 
-	public ClusterConfig() {
+	private ClusterConfig() {
 		
 		parseConfigFile();
 	}
+
+	public static ClusterConfig getInstance(){
+		return CC;	
+	}
+
 	/**
 	 * Parse the configuration file and populate all the 
 	 * fields in configuration

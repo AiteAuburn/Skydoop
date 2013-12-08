@@ -7,9 +7,11 @@ JC = javac
 
 CLASSES = \
 		mapreduce/ClientJobSubmitter.java\
+		mapreduce/JobTracker.java\
+		mapreduce/TaskTrackerServices.java\
+		mapreduce/JobMeta.java\
 		mapreduce/ClusterConfig.java\
 		mapreduce/ReducerWorker.java\
-		mapreduce/TaskTrackerServices.java\
 		mapreduce/Utility.java\
 		mapreduce/ClientServices.java\
 		mapreduce/DefaultTaskScheduler.java\
@@ -17,8 +19,6 @@ CLASSES = \
 		mapreduce/Job.java\
 		mapreduce/JobClient.java\
 		mapreduce/JobConf.java\
-		mapreduce/JobMeta.java\
-		mapreduce/JobTracker.java\
 		mapreduce/JobTrackerJobSubmitter.java\
 		mapreduce/JobTrackerServices.java\
 		mapreduce/MapStatusChecker.java\

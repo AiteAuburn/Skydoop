@@ -36,12 +36,10 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
     /* if this is a mapper task */
     if (taskInfo.getType() == TaskMeta.TaskType.MAPPER) {
       MapperTaskInfo mapperTaskInfo = (MapperTaskInfo) taskInfo;
-	  System.out.println("some methods are map");
       /* lock the mapper counter */
       synchronized (taskTracker.mapperCounter) {
 
         /* if there is free mapper slots */
-        System.out.println("access synchronized");
         if (taskTracker.mapperCounter < taskTracker.NUM_OF_MAPPER_SLOTS) {
 
           /* do some logging */
