@@ -1,5 +1,5 @@
 JFLAGS = -d ../bin/
-JEXFLAGS = -d ../bin2/
+JEXFLAGS = -d ../skyBin/
 JC = javac
 .SUFFIXES: .java .class
 .java.class:
@@ -7,6 +7,7 @@ JC = javac
 
 CLASSES = \
 		mapreduce/ClientJobSubmitter.java\
+		mapreduce/ClusterConfig.java\
 		mapreduce/ReducerWorker.java\
 		mapreduce/TaskTrackerServices.java\
 		mapreduce/Utility.java\
@@ -55,6 +56,6 @@ clean:
 
 
 
-WORDCOUNT_FILES = ./example/wordcount/*.java
-wordcount:
-	$(JC) $(JEXFLAGS) $(WORDCOUNT_FILES)
+SKYLINE_FILES = ./example/skyline/*.java
+skyline:
+	$(JC) $(JEXFLAGS) $(SKYLINE_FILES)
