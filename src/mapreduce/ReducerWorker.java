@@ -270,9 +270,9 @@ public class ReducerWorker extends Worker {
     // 2. copy key/value pairs from mappers
     List<File> mapperOutputFiles = this.copy();
 
-   /* for(int i=0; i<mapperOutputFiles.size(); i++){*/
-		//System.out.println("one file path " + mapperOutputFiles.get(i).getAbsolutePath());	
-	/*}*/
+   for(int i=0; i<mapperOutputFiles.size(); i++){
+		System.out.println("one file path " + mapperOutputFiles.get(i).getAbsolutePath());	
+	}
 
     // 3. sort and group all key/value pairs
     this.groupPercentage = (float) 1.0;

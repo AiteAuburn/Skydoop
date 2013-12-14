@@ -5,13 +5,14 @@ JC = javac
 .java.class:
 	$(JC) $(JFLAGS) $*.java
 
+
 CLASSES = \
 		mapreduce/ClientJobSubmitter.java\
+		mapreduce/ReducerWorker.java\
 		mapreduce/JobTracker.java\
 		mapreduce/TaskTrackerServices.java\
 		mapreduce/JobMeta.java\
 		mapreduce/ClusterConfig.java\
-		mapreduce/ReducerWorker.java\
 		mapreduce/Utility.java\
 		mapreduce/ClientServices.java\
 		mapreduce/DefaultTaskScheduler.java\
