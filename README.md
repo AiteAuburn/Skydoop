@@ -1,4 +1,4 @@
 SkyDoop
 ==================
 
-A Map Reduce facility specially for answering Probabilistic Skyline Query
+A Map Reduce facility specially for answering Probabilistic Skyline Query.
