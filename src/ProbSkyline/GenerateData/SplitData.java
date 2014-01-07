@@ -1,11 +1,11 @@
-package org.liang.GenerateData;
+package ProbSkyline.GenerateData;
 
-import org.liang.DataStructures.instance;
-import org.liang.DataStructures.item;
-import org.liang.DataStructures.PartitionInfo;
+import ProbSkyline.DataStructures.instance;
+import ProbSkyline.DataStructures.item;
+import ProbSkyline.DataStructures.PartitionInfo;
 
-import org.liang.IO.TextInstanceWriter;
-import org.liang.IO.TextInstanceReader;
+//import ProbSkyline.IO.TextInstanceWriter;
+import ProbSkyline.IO.TextInstanceReader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -38,12 +38,11 @@ public class SplitData{
 
 	public static double[] split_Value;
 
-//	public static final Logger log = LoggerFactory.getLogger(SplitData.class);
 	private static org.apache.log4j.Logger log = Logger.getRootLogger();
 	
 	public static final int MaxSplitNum = 10;
-	public static final boolean logEnable = true;
-	public static TextInstanceWriter[] TIWs;
+	public static final boolean logEnable = false;
+	//public static TextInstanceWriter[] TIWs;
 
 	public SplitData(){
 
@@ -66,6 +65,8 @@ public class SplitData{
 	public static void FindleftExtremePoint(item a_item){
 		int instanceNum = a_item.instances.size();
 		HashSet<Integer> areaSet = new HashSet<Integer>();
+		if(logEnable)
+			System.out.println("access FindLeftExtremePoint");
 
 		instance.point min,max;
 		min = new instance.point(dim);
@@ -89,15 +90,6 @@ public class SplitData{
 		int max_area = max.partition(split_Value,splitNum);	
 
 		PartitionInfo aPartInfo = null;
-
-		//aPartInfo = outputLists.get(min_area);
-		//if(aPartInfo != null)
-			//aPartInfo.addMin(a_item.objectID,min);
-
-		//aPartInfo = outputLists.get(max_area);
-		//if(aPartInfo != null)
-			//aPartInfo.addMax(a_item.objectID,max);
-
 	
 		for(int i=0; i<instanceNum; i++){
 			instance a_instance = a_item.instances.get(i);
@@ -131,18 +123,18 @@ public class SplitData{
 			for(int j=0; j<length; j++){
 				//System.out.println("instance dim = "+ a_item.instances.get(j).a_point.dimCount  );
 				int ret_areaID = a_item.instances.get(j).partition(split_value, splitNum);
-				try{
-				TIWs[ret_areaID].write(a_item.instances.get(j));	
-				}catch(IOException e){e.printStackTrace();}
+				//try{
+				//TIWs[ret_areaID].write(a_item.instances.get(j));	
+				//}catch(IOException e){e.printStackTrace();}
 			}
 		}
 
 	
-		for(int i=0; i<splitNum; i++){
-			try{
-			TIWs[i].close();
-			}catch(IOException e){e.printStackTrace();}
-		}
+		//for(int i=0; i<splitNum; i++){
+			//try{
+			//TIWs[i].close();
+			//}catch(IOException e){e.printStackTrace();}
+		//}
 	}
 
 	public static void main(String args[]){
@@ -197,12 +189,12 @@ public class SplitData{
 			}
 
 			splitNum = split_index;
-			TIWs = new TextInstanceWriter[splitNum];
+		   /* TIWs = new TextInstanceWriter[splitNum];*/
 
-			for(int i=0;i<TIWs.length;i++){
+			//for(int i=0;i<TIWs.length;i++){
 
-				TIWs[i] = new TextInstanceWriter(Integer.toString(i));	
-			}
+				//TIWs[i] = new TextInstanceWriter(Integer.toString(i));	
+		   /* }*/
 
 		}
 		catch (FileNotFoundException foef){
@@ -212,9 +204,7 @@ public class SplitData{
 			ex.printStackTrace();
 		}
 
-
-
-		partitionSubList(itemList,split_Value);
+		//partitionSubList(itemList,split_Value);
 
 		outputLists = new ArrayList<PartitionInfo>();
 
@@ -227,7 +217,6 @@ public class SplitData{
 
 			FindleftExtremePoint(i);
 		}
-
 
 		try{
 

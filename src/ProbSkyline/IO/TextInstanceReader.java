@@ -1,7 +1,7 @@
-package org.liang.IO;
+package ProbSkyline.IO;
 
-import org.liang.DataStructures.instance;
-import org.liang.DataStructures.item;
+import ProbSkyline.DataStructures.instance;
+import ProbSkyline.DataStructures.item;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -1,4 +1,4 @@
-package org.liang.DataStructures;
+package ProbSkyline.DataStructures;
 
 import java.util.ArrayList;
 import java.util.Arrays;
