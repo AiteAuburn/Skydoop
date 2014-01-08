@@ -2,7 +2,6 @@ package ProbSkyline;
 import mapreduce.ClusterConfig;
 import ProbSkyline.DataStructures.instance;
 
-
 public class SkyClient{
 
 	ClusterConfig CC;
@@ -17,6 +16,24 @@ public class SkyClient{
 		}
 		else
 			System.out.println("Sth Wrong in creating instance.");
+	}
+
+	public SkyClient(ClusterConfig CC){
+		this.CC= CC;	
+	}
+
+	public instance stringToInstance(String instString){
+
+		String [] div = instString.split(" ");
+		instance inst = null;
+		if(div.length == CC.dim+3){
+			inst= new instance(Util.getObjectID(div[0]), Util.getInstID(div[1]), Util.getProb(div[div.length-1]), CC.dim);
+			inst.setPoint(Util.getPoint(div, CC.dim));
+		}
+		else
+			System.out.println("Sth Wrong in creating instance.");
+
+		return inst;
 	}
 
 	/**

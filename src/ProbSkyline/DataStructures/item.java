@@ -53,6 +53,11 @@ public class item{
 		this.instances.add(a_instance);
 	}
 
+	public void addInstance(instance aInst){
+
+		instances.add(aInst);	
+	}
+
 	public void setMin(instance.point a_min){
 //		log.info("test log 4j - - - " );
 		this.min = a_min;
