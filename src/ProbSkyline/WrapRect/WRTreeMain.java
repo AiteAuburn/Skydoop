@@ -1,4 +1,3 @@
-package org.liang.KDTree;
 
 import java.util.ArrayList;
 import java.util.Collection;

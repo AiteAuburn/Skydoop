@@ -17,7 +17,6 @@ public class WCReducer extends Reducer {
   public void reduce(String key, Iterator<String> values, Outputer out) {
 
     long sum = 0;
-	List<item> itemList = new ArrayList<item>();
 	HashMap<Integer,item > aMap = new HashMap<Integer, item>(); 
 
 	SkyClient client = new SkyClient(ClusterConfig.getInstance()); 
@@ -38,6 +37,9 @@ public class WCReducer extends Reducer {
 	  item currItem = aMap.get(objectID);
 	  currItem.addInstance(curr);
     }
+	
+	List<item> itemList = new ArrayList<item>(aMap.values());
+	client.prune(itemList);
     
     //out.collect(key, Long.toString(sum));
   }

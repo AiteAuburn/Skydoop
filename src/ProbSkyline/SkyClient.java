@@ -1,6 +1,12 @@
 package ProbSkyline;
 import mapreduce.ClusterConfig;
 import ProbSkyline.DataStructures.instance;
+import ProbSkyline.DataStructures.item;
+
+import ProbSkyline.ProbSkyQuery.Prune1And2;
+import ProbSkyline.ProbSkyQuery.Prune3;
+
+import java.util.List;
 
 public class SkyClient{
 
@@ -44,5 +50,18 @@ public class SkyClient{
 			return aInst.partition(CC.splitValue, CC.numWorkers);	
 
 		return -1;
+	}
+
+	/**
+	 * Do Prunning work in an partition.
+	 */
+	public void prune(List<item> itemList){
+		Prune1And2 P12 = new Prune1And2(itemList, CC);	
+		P12.prune();
+		List<instance> afterPrune12List = P12.itemsToinstances();
+
+		Prune3 P3 = new Prune3(afterPrune12List, CC);
+		P3.setClusterConfig(CC);
+		P3.prune();
 	}
 }

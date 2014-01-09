@@ -64,6 +64,6 @@ public abstract class PruneBase{
 		catch(IOException e){ e.printStackTrace(); }
 	}
 
-	protected abstract void preprocess();
-	protected abstract void prune();
+	public abstract void preprocess();
+	public abstract void prune();
 }

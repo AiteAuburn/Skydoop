@@ -1,10 +1,10 @@
-package org.liang.ProbSkyQuery;
+package ProbSkyline.ProbSkyQuery;
 
-import org.liang.IO.TextInstanceWriter;
-import org.liang.IO.TextInstanceReader;
+import ProbSkyline.DataStructures.*;
+import ProbSkyline.IO.*;
 
-import org.liang.DataStructures.*;
-import org.liang.IO.*;
+import mapreduce.ClusterConfig;
+
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -15,33 +15,23 @@ import java.util.Properties;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.liang.ClusterConfig;
 
 public class Prune3 extends PruneBase{
 	private static org.apache.log4j.Logger log = Logger.getRootLogger();
 
 	public List<instance> instances;
-	public ClusterConfig CC;
 
-	public Prune3(){
-		super();
-		this.preprocess();	
-		itemsToinstances();
-	}
-
-	public Prune3(List<instance> aList){
-		
+	public Prune3(List<instance> aList, ClusterConfig CC){
+		super(null, CC);
 		instances = aList;	
 	}
 
 	public void setClusterConfig(ClusterConfig CC){
-		this.CC = CC;	
+		super.CC = CC;	
 	}
 
 	@Override
-	protected void preprocess() {
-		super.init();
-		super.readFile();
+	public void preprocess() {
 		super.setItemSkyBool();
 	}
 
@@ -59,7 +49,7 @@ public class Prune3 extends PruneBase{
 	}
 
 	@Override
-	protected void prune() {
+	public void prune() {
 		compute();
 	}
 
@@ -80,7 +70,7 @@ public class Prune3 extends PruneBase{
 		if( PruneMain.verbose )
 			log.info("in compute function instances size = "+ instances.size());
 		//CompProbSky compProbSky = new KDTreeHandler(instances, super.dim, super.ItemSkyBool);
-		CompProbSky compProbSky = new WRTreeHandler(instances, super.dim, super.ItemSkyBool,CC.numDiv - 1);
+		CompProbSky compProbSky = new WRTreeHandler(instances, CC.dim, super.ItemSkyBool, CC.numDiv - 1);
 		compProbSky.computeProb();
 		compObjSky();
 	}

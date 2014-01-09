@@ -1,4 +1,4 @@
-package org.liang.Visual;
+package ProbSkyline.Visual;
 
 import java.awt.Dimension;
 
@@ -14,7 +14,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.Ellipse2D;
 import java.awt.Color;
 
-import org.liang.DataStructures.instance;
+import ProbSkyline.DataStructures.instance;
 
 
 public class MinMaxVisual extends JFrame {

@@ -1,8 +1,8 @@
-package org.liang.ProbSkyQuery;
+package ProbSkyline.ProbSkyQuery;
 
-import org.liang.DataStructures.instance;
+import ProbSkyline.DataStructures.instance;
 
-import org.liang.WrapRect.*;
+import ProbSkyline.WrapRect.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package org.liang.WrapRect;
+package ProbSkyline.WrapRect;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 
-import org.liang.DataStructures.instance;
+import ProbSkyline.DataStructures.instance;
 import org.apache.log4j.Logger;
 
 public class WRTreeInfo{

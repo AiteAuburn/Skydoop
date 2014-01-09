@@ -1,5 +1,6 @@
 JFLAGS = -d ../bin/
 JEXFLAGS = -d ../skyBin/
+MaxMin = -d ../MaxMin/
 JC = javac
 .SUFFIXES: .java .class
 .java.class:
@@ -56,7 +57,13 @@ clean:
 	rm -rf ../bin/*
 
 
-
 SKYLINE_FILES = ./example/skyline/*.java
 skyline:
-	$(JC) $(JEXFLAGS) $(SKYLINE_FILES)
+	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. $(SKYLINE_FILES)
+
+MaxMinMain= ./ProbSkyline/GenerateData/SplitData.java
+maxmin:
+	$(JC) $(MaxMin) -cp log4j-1.2.17.jar:. $(MaxMinMain)
+
+prune:
+	$(JC) -cp log4j-1.2.17.jar:. ./ProbSkyline/ProbSkyQuery/Prune3.java 

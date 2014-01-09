@@ -1,6 +1,6 @@
-package org.liang.ProbSkyQuery;
+package ProbSkyline.ProbSkyQuery;
 
-import org.liang.DataStructures.instance;
+import ProbSkyline.DataStructures.instance;
 
 import java.util.List;
 

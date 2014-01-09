@@ -1,4 +1,4 @@
-package org.liang.WrapRect;
+package ProbSkyline.WrapRect;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import org.liang.DataStructures.*;
+import ProbSkyline.DataStructures.*;
 
 /**
  *	Wrap Rectangle tree;

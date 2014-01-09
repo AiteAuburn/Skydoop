@@ -1,8 +1,8 @@
 // Hyper-Rectangle class supporting KDTree class
 
-package org.liang.WrapRect;
+package ProbSkyline.WrapRect;
 
-import org.liang.DataStructures.instance;
+import ProbSkyline.DataStructures.instance;
 
 /*
  * Rect is the intermediate level of KDTree. It includes various

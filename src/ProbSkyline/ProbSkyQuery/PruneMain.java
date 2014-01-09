@@ -1,12 +1,12 @@
-package org.liang.ProbSkyQuery;
+package ProbSkyline.ProbSkyQuery;
 
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 
-import org.liang.Visual.InstVisualization;
-import org.liang.ClusterConfig;
+import ProbSkyline.Visual.InstVisualization;
+import mapreduce.ClusterConfig;
 
 /**
  * Main function of prune 1.1-1.3.
@@ -33,11 +33,10 @@ public class PruneMain{
 
 		initializeLogger("WRProb");
 		long tStart = System.currentTimeMillis();
-		ClusterConfig CC = new ClusterConfig();
-		Prune3 P3 = new Prune3();	
-		P3.setClusterConfig(CC);
-		//P12.preprocess();
-		P3.prune();
+		//Prune3 P3 = new Prune3();	
+		//P3.setClusterConfig(CC);
+		////P12.preprocess();
+		//P3.prune();
 
 	   /* Prune1And2 P12 = new Prune1And2(5);*/
 		//P12.prune();

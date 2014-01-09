@@ -1,10 +1,8 @@
-package org.liang.ProbSkyQuery;
+package ProbSkyline.ProbSkyQuery;
 
-import org.liang.IO.TextInstanceWriter;
-import org.liang.IO.TextInstanceReader;
-
-import org.liang.DataStructures.*;
-import org.liang.IO.*;
+import mapreduce.ClusterConfig;
+import ProbSkyline.DataStructures.*;
+import ProbSkyline.IO.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -14,32 +12,29 @@ import java.util.Properties;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.liang.Visual.MinMaxVisual;
+import ProbSkyline.Visual.MinMaxVisual;
 
 public class Prune1And2 extends PruneBase{
 
 	public List<item> afterPrune1;
 	public List<instance> instances;
 
-	int testAreaInt;
-
-	public Prune1And2 (int testAreaInt){
-		super();
-		this.testAreaInt = testAreaInt;
-		this.preprocess();	
+	public Prune1And2 (List<item> itemList, ClusterConfig CC){
+		super(itemList, CC);
+		this.preprocess();
 	}
 
 	@Override
-	protected void preprocess() {
-		super.init();
-		super.readFile(testAreaInt);
+	public void preprocess() {
+		super.readFile();
 		super.setItemSkyBool();
-		
 		System.out.println("before Prune 1 the number of items  = "+ listItem.size());
 	}
 
+	/**
+	 * convert items to instance List for wrap Rectangle Tree.
+	 */
 	public List<instance> itemsToinstances(){
-
 		int instanceAfter = 0;
 		instances = new ArrayList<instance>();
 
@@ -58,6 +53,9 @@ public class Prune1And2 extends PruneBase{
 		return instances;
 	}
 
+	/**
+	 * Prune objects which is pruned in the phase prune 1.1
+	 */
 	public List<item> itemsToItems(){
 
 		int itemAfter = 0;
@@ -75,7 +73,8 @@ public class Prune1And2 extends PruneBase{
 		return retList;
 	}
 
-	protected void prune(){
+
+	public void prune(){
 		rule1();
 		setAfterPrune1List();
 		rule2();
@@ -127,12 +126,15 @@ public class Prune1And2 extends PruneBase{
 	@SuppressWarnings("rawtypes")
 	public void rule1(){
 		
-		PartitionInfo thisArea = outputLists.get(Integer.parseInt(super.testArea));
+		PartitionInfo thisArea = outputLists.get(Integer.parseInt(CC.testArea));
 
 		if(thisArea != null){
 			HashMap<Integer, instance.point> min = thisArea.min;
 			HashMap<Integer, instance.point> max = thisArea.max;
 
+			/*
+			 * visualized Min Max rectangle by calling this function.
+			 */
 			//VisuaMinMax(min, max);
 
 			Iterator iter_max = max.entrySet().iterator();
@@ -171,14 +173,13 @@ public class Prune1And2 extends PruneBase{
 				}
 			}
 		}
-		
 	}
 
 
 	@SuppressWarnings("rawtypes")
 	public void rule2(){
 
-		PartitionInfo thisArea = outputLists.get(Integer.parseInt(super.testArea));
+		PartitionInfo thisArea = outputLists.get(Integer.parseInt(CC.testArea));
 		
 		Iterator iter_corr = corrIndex.entrySet().iterator();
 		while(iter_corr.hasNext()){
@@ -203,6 +204,5 @@ public class Prune1And2 extends PruneBase{
 				}	
 			}
 		}
-
 	}
 }
