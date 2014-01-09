@@ -75,8 +75,6 @@ public class Prune1And2 extends PruneBase{
 		return retList;
 	}
 
-
-
 	protected void prune(){
 		rule1();
 		setAfterPrune1List();
