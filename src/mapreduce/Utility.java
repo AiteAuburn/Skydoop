@@ -78,7 +78,7 @@ public class Utility {
 		String[] newargs = new String[args.length + 4]; /* three more args for path, -cp, classpath */
 		newargs[0] = path;
 		newargs[1] = "-cp";
-		newargs[2] = classpath + File.pathSeparator + Utility.getParam("USER_CLASS_PATH") + separator + "job" + jid;
+		newargs[2] = classpath + File.pathSeparator + "/home/liang/Desktop/Skydoop/src/log4j-1.2.17.jar" + File.pathSeparator + Utility.getParam("USER_CLASS_PATH") + separator + "job" + jid;
 
 		/* get the rmi codebase path */
 		newargs[3] = "-Djava.rmi.server.codebase=file:" + Utility.getParam("RMI_CODE_BASE");
@@ -101,5 +101,4 @@ public class Utility {
 		ProcessBuilder processBuilder = new ProcessBuilder(args);
 		processBuilder.start();
 	}
-	
 }

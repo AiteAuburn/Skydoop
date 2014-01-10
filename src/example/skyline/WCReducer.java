@@ -39,6 +39,11 @@ public class WCReducer extends Reducer {
     }
 	
 	List<item> itemList = new ArrayList<item>(aMap.values());
+	if(itemList.size() <1)
+		System.out.println("Sth Wrong in retrieveing itemList");
+	else
+		System.out.println("itemList size = "+ itemList.size());
+
 	client.prune(itemList);
     
     //out.collect(key, Long.toString(sum));

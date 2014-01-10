@@ -41,7 +41,7 @@ public abstract class PruneBase{
 
 	public void setItemSkyBool(){
 	
-		ItemSkyBool = new HashMap<Integer,Boolean>();
+		ItemSkyBool = new HashMap<Integer, Boolean>();
 		for(int i=0; i<listItem.size();i++){
 			int objectID = listItem.get(i).objectID;
 			ItemSkyBool.put(objectID,true);
