@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import ProbSkyline.Visual.MinMaxVisual;
+import ProbSkyline.Visual.InstVisualization;
 
 public class Prune1And2 extends PruneBase{
 
@@ -28,6 +29,7 @@ public class Prune1And2 extends PruneBase{
 	public void preprocess() {
 		super.readFile();
 		super.setItemSkyBool();
+		//itemsToinstances();
 		System.out.println("before Prune 1 the number of items  = "+ listItem.size());
 	}
 
@@ -40,7 +42,7 @@ public class Prune1And2 extends PruneBase{
 
 		for(int i=0; i<listItem.size(); i++){
 			item aItem = listItem.get(i);
-			if(ItemSkyBool.get(aItem.objectID) == false )
+			if(ItemSkyBool.get(aItem.objectID) == false)
 				continue;
 				
 			for(int j=0; j<aItem.instances.size();j++){
@@ -50,6 +52,7 @@ public class Prune1And2 extends PruneBase{
 			}
 		}
 		System.out.println("after Prune 1 the number of instances = "+ instanceAfter);
+		//new InstVisualization(instances);
 		return instances;
 	}
 
@@ -135,7 +138,7 @@ public class Prune1And2 extends PruneBase{
 			/*
 			 * visualized Min Max rectangle by calling this function.
 			 */
-			//VisuaMinMax(min, max);
+			//VisualMinMax(min, max);
 
 			Iterator iter_max = max.entrySet().iterator();
 			while(iter_max.hasNext()){

@@ -30,7 +30,8 @@ public class SkyMain{
 		String [] div = instString.split(" ");
 		instance inst = null;
 		if(div.length == CC.dim+3){
-			inst= new instance(Util.getObjectID(div[0]), Util.getInstID(div[1]), Util.getProb(div[div.length-1]), CC.dim);
+
+			inst= new instance(Util.getInstID(div[1]), Util.getObjectID(div[0]), Util.getProb(div[div.length-1]), CC.dim);
 			inst.setPoint(Util.getPoint(div, CC.dim));
 		}
 		else
@@ -50,9 +51,9 @@ public class SkyMain{
 		String line = br.readLine();
 		while( line != null){
 
-			instance curr = client.stringToInstance(line);
+			instance curr = stringToInstance(line);
 			int objectID = curr.objectID;
-			if(aMap.containsKey(objectID) == false){
+			if(aMap.containsKey((Integer)objectID) == false){
 
 				item aItem = new item(objectID);              
 				aMap.put(objectID, aItem);
@@ -76,7 +77,9 @@ public class SkyMain{
 		List<instance> afterPrune12List = P12.itemsToinstances();
 
 		Prune3 P3 = new Prune3(afterPrune12List, CC);
+		P3.setListItem(P12.itemsToItems());
 		P3.setClusterConfig(CC);
+		P3.setItemSkyBool(P12.ItemSkyBool);
 		P3.prune();
 	}
 
@@ -90,4 +93,5 @@ public class SkyMain{
 		else
 			System.out.println("Sth Wrong in retrieving itemList in getItemList");
 	}
+
 }

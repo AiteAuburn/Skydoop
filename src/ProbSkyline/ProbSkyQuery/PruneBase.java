@@ -36,6 +36,7 @@ public abstract class PruneBase{
 		
 		listItem = itemList;
 		this.CC = CC;
+		corrIndex = new HashMap<Integer, Integer>();
 	}
 
 	public void setItemSkyBool(){

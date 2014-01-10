@@ -32,7 +32,16 @@ public class Prune3 extends PruneBase{
 
 	@Override
 	public void preprocess() {
-		super.setItemSkyBool();
+
+	}
+
+	public void setItemSkyBool( HashMap<Integer, Boolean> itemSkyBool ){
+		
+		super.ItemSkyBool = itemSkyBool;
+	}
+
+	public void setListItem( List<item> listItem  ){
+		super.listItem = listItem;
 	}
 
 	public void itemsToinstances(){
@@ -63,6 +72,7 @@ public class Prune3 extends PruneBase{
 			}
 		if(objSkyProb >= CC.threshold)
 			log.info("objSkyProb = "+  objSkyProb);
+			System.out.println("objSkyProb = "+  objSkyProb);
 		}	
 	}
 
