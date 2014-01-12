@@ -42,6 +42,9 @@ public abstract class PruneBase{
 	public void setItemSkyBool(){
 	
 		ItemSkyBool = new HashMap<Integer, Boolean>();
+		if(listItem == null) 
+			System.out.println("Sth Wrong in retrieving listItem.");
+
 		for(int i=0; i<listItem.size();i++){
 			int objectID = listItem.get(i).objectID;
 			ItemSkyBool.put(objectID,true);
@@ -57,7 +60,6 @@ public abstract class PruneBase{
 			ObjectInputStream in = new ObjectInputStream(input);
 
 			outputLists = ( ArrayList< PartitionInfo >)in.readObject();
-
 			in.close();
 			input.close(); 
 		}

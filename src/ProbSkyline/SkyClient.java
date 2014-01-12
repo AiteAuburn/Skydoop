@@ -61,7 +61,9 @@ public class SkyClient{
 		List<instance> afterPrune12List = P12.itemsToinstances();
 
 		Prune3 P3 = new Prune3(afterPrune12List, CC);
+		P3.setListItem(P12.listItem);
 		P3.setClusterConfig(CC);
+		P3.setItemSkyBool(P12.getItemSkyBool());
 		P3.prune();
 	}
 }

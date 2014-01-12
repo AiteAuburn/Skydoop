@@ -33,6 +33,11 @@ public class Prune1And2 extends PruneBase{
 		System.out.println("before Prune 1 the number of items  = "+ listItem.size());
 	}
 
+	public HashMap<Integer, Boolean> getItemSkyBool(){
+		return super.ItemSkyBool;	
+	}
+
+
 	/**
 	 * convert items to instance List for wrap Rectangle Tree.
 	 */
