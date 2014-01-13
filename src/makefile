@@ -1,6 +1,7 @@
 JFLAGS = -d ../bin/
 JEXFLAGS = -d ../skyBin/
 MaxMin = -d ../MaxMin/
+ProbSkyline = -d ../ProbSkyline/
 JC = javac
 .SUFFIXES: .java .class
 .java.class:
@@ -57,13 +58,22 @@ clean:
 	rm -rf ../bin/*
 
 
+
 SKYLINE_FILES = ./example/skyline/*.java
 skyline:
 	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. $(SKYLINE_FILES)
+	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. ./ProbSkyline/DataStructures/PartitionInfo.java
+	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. ./ProbSkyline/WrapRect/*.java
+	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. ./ProbSkyline/ProbSkyQuery/Prune3.java
+	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. ./ProbSkyline/ProbSkyQuery/Prune1And2.java
 
-MaxMinMain= ./ProbSkyline/GenerateData/SplitData.java
+MaxMinMain = ./ProbSkyline/GenerateData/SplitData.java
+
 maxmin:
 	$(JC) $(MaxMin) -cp log4j-1.2.17.jar:. $(MaxMinMain)
 
 prune:
-	$(JC) -cp log4j-1.2.17.jar:. ./ProbSkyline/ProbSkyQuery/Prune3.java 
+	$(JC)  -cp log4j-1.2.17.jar:. ./ProbSkyline/SkyMain.java 
+
+skyMain:
+	java -cp log4j-1.2.17.jar:. ProbSkyline.SkyMain
