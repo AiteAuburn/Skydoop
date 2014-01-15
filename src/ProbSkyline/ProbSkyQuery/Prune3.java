@@ -20,6 +20,7 @@ public class Prune3 extends PruneBase{
 	private static org.apache.log4j.Logger log = Logger.getRootLogger();
 
 	public List<instance> instances;
+	public HashMap<Integer, Double> retMap;
 
 	public Prune3(List<instance> aList, ClusterConfig CC){
 		super(null, CC);
@@ -63,6 +64,7 @@ public class Prune3 extends PruneBase{
 	}
 
 	public void compObjSky(){
+		retMap = new HashMap<Integer, Double>();
 		for(int i=0; i<listItem.size(); i++){
 			item curr = listItem.get(i);	
 			double objSkyProb = 0.0;
@@ -70,9 +72,10 @@ public class Prune3 extends PruneBase{
 				instance aInst = curr.instances.get(j);
 				objSkyProb += aInst.prob * aInst.instSkyProb;
 			}
-		if(objSkyProb >= CC.threshold)
-			log.info("objSkyProb = "+  objSkyProb);
-			System.out.println("objSkyProb = "+  objSkyProb);
+			if(objSkyProb >= CC.threshold){
+				retMap.put(curr.objectID, objSkyProb);
+				System.out.println("objectID = "+curr.objectID + "prob = "+objSkyProb);
+			}
 		}	
 	}
 
