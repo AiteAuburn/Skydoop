@@ -13,6 +13,7 @@ public class WCPartitioner implements Partitioner {
     return Math.abs(key.hashCode()) % this.reducerNum;
   }
 
+
   public int getReducerNum() {
     return this.reducerNum;
   }
