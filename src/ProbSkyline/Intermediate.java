@@ -11,8 +11,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
@@ -158,15 +160,68 @@ public class Intermediate{
 		}
 
 		/*
+		 * find max point of every colum
+		 */
+		ArrayList<instance.point> maxList = new ArrayList<instance.point>();
+		for(ArrayList<instance> col : divList){
+			instance.point max = new instance.point(CC.dim);	
+			max.setOneValue(0);
+			for(instance inst:col){
+				for(int j=0; j< CC.dim; j++){
+					if(inst.a_point.__coordinates[j] > max.__coordinates[j])
+						max.__coordinates[j] = inst.a_point.__coordinates[j];
+				}
+			}
+			maxList.add(max);
+		}
+		/*
 		 * After parition objects into several colums, we print the data based on
 		 * <Area> <L>/<R> regular instance information.
 		 */
-
-
+		String outputFile = CC.intermediate;
+		try{
+			BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
+			for(int col = 0; col<divList.size(); col++){
+				for(instance inst:divList.get(col) ){
+					StringBuffer sb = new StringBuffer();
+					sb.append(Integer.toString(col) + " ");
+					sb.append("R" + " " + instToString(inst));
+					write(bw, sb.toString());
+				}
+				instance.point max = maxList.get(col);
+				ArrayList<instance> coList = divList.get(col);
+				for(instance inst: instList){
+					if(coList.contains(inst)) continue;
+					if(inst.a_point.DominateAnother(max)){
+						StringBuffer sb = new StringBuffer();
+						sb.append(Integer.toString(col) + " ");
+						sb.append("L" + " " + instToString(inst));
+						write(bw, sb.toString());
+					}
+				}
+			}
+		}
+		catch(IOException io){
+			io.printStackTrace();
+		}
 	}
 
+	public void write(BufferedWriter bw, String aString) throws IOException{
+		bw.write(aString);	
+	}
+
+	public String instToString(instance inst){
+		int objectID = inst.objectID;
+		int instID = inst.instanceID;
+		String temp = Integer.toString(objectID) + " "+ Integer.toString(instID)+" ";
+		temp += inst.a_point.toString();
+		temp += Double.toString(inst.prob)+"\n";
+		return temp;
+	}
+
+
 	int findLocOfSeparator(double[] separ, double x){
-		
+
 		int ret =0;
 		for(ret=0; ret<separ.length; ret++){
 			if(x<separ[ret]) break;
