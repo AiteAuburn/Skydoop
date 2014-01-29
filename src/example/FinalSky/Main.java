@@ -7,17 +7,17 @@ public class Main {
   public static void main(String[] args) {
     if (args.length != 3) {
       System.out.println("Usage: FinalSky <input_path> <output_path> <jar_path>");
-      return ;
+      return;
     }
     
     JobConf jconf = new JobConf();
-    jconf.setJobName("ProbSkyline");
+    jconf.setJobName("FinalSky");
     
     jconf.setInputPath(args[0]);
     jconf.setOutputPath(args[1]);
     jconf.setJarFilePath(args[2]);
     
-    jconf.setBlockSize(1000000);
+    jconf.setBlockSize(10000);
     
     jconf.setMapperClassName("example.FinalSky.WCMapper");
     jconf.setReducerClassName("example.FinalSky.WCReducer");
