@@ -55,7 +55,7 @@ public class NaivePrune extends PruneBase{
 	}
 
 	public void compute(){
-		//if(PruneMain.verbose  )
+		//if(PruneMain.verbose)
 			//log.info("in compute function instances size = "+ instances.size());
 
 		CompProbSky compProbSky = new NaiveHandler(super.listItem, super.dim, PruneBase.threshold, 2);

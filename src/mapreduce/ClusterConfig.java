@@ -23,6 +23,8 @@ public class ClusterConfig implements Serializable{
 	public int maxObjectNum;
 	public String testArea;
 	public double threshold;
+	public String srcName;
+	public String intermediate;
 
 	/*insert an comment
 	 */
@@ -84,6 +86,8 @@ public class ClusterConfig implements Serializable{
 		this.testArea = prop.getProperty("testArea");
 		this.numDiv = Integer.parseInt(prop.getProperty("numDiv"));
 		threshold = Double.parseDouble(prop.getProperty("threshold"));
+		this.srcName= prop.getProperty("srcName");
+		this.intermediate= prop.getProperty("intermediate");
 	}
 }
 

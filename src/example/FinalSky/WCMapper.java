@@ -11,4 +11,4 @@ public class WCMapper extends Mapper {
 		String [] line = value.split(" "); 
 		out.collect(line[0], value);
 	}
-
+}

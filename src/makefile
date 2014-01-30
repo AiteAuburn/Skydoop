@@ -1,5 +1,6 @@
 JFLAGS = -d ../bin/
 JEXFLAGS = -d ../skyBin/
+FinalBin = -d ../FinalskyBin/
 MaxMin = -d ../MaxMin/
 ProbSkyline = -d ../ProbSkyline/
 JC = javac
@@ -63,9 +64,17 @@ SKYLINE_FILES = ./example/skyline/*.java
 skyline:
 	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. $(SKYLINE_FILES)
 	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. ./ProbSkyline/DataStructures/PartitionInfo.java
+	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. ./mapreduce/ClusterConfig.java
 	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. ./ProbSkyline/WrapRect/*.java
 	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. ./ProbSkyline/ProbSkyQuery/Prune3.java
 	$(JC) $(JEXFLAGS) -cp log4j-1.2.17.jar:. ./ProbSkyline/ProbSkyQuery/Prune1And2.java
+
+Finalsky_FILES = ./example/FinalSky/*.java
+Finalsky:
+	$(JC) $(FinalBin) -cp log4j-1.2.17.jar:. $(Finalsky_FILES)
+	$(JC) $(FinalBin) -cp log4j-1.2.17.jar:. ./mapreduce/ClusterConfig.java
+	$(JC) $(FinalBin) -cp log4j-1.2.17.jar:. ./ProbSkyline/ProbSkyQuery/InstNaive.java
+	$(JC) $(FinalBin) -cp log4j-1.2.17.jar:. ./ProbSkyline/InterClient.java
 
 MaxMinMain = ./ProbSkyline/GenerateData/SplitData.java
 
@@ -77,3 +86,9 @@ prune:
 
 skyMain:
 	java -cp log4j-1.2.17.jar:. ProbSkyline.SkyMain
+
+inter:
+	java -cp log4j-1.2.17.jar:. ProbSkyline.Intermediate
+
+compileInter:
+	javac -cp log4j-1.2.17.jar:. ./ProbSkyline/Intermediate.java

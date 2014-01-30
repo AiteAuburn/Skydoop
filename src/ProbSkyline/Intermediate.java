@@ -2,6 +2,8 @@ package ProbSkyline;
 import mapreduce.ClusterConfig;
 import ProbSkyline.DataStructures.instance;
 import ProbSkyline.DataStructures.item;
+import ProbSkyline.Visual.InstVisualization;
+import ProbSkyline.ProbSkyQuery.InstNaive;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -9,6 +11,8 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Collections;
+import java.util.Comparator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -21,13 +25,12 @@ import java.io.FileNotFoundException;
 /**
  * This class is in charge of the partitioning after first phase of MapReduce.
  */
-
 public class Intermediate{
-
 	ClusterConfig CC;
 	String inputPath;
 	List<item> itemList;
 	List<instance> instList;
+	List<instance> leftInstList;
 	ArrayList<ArrayList<instance>> divList;
 	Set<Integer> cands;
 
@@ -86,7 +89,6 @@ public class Intermediate{
 		this.itemList = new ArrayList<item>(aMap.values());
 	}
 
-
 	/*
 	 * Remove all items which is unrelated to candidates in the next phase.
 	 */
@@ -139,6 +141,19 @@ public class Intermediate{
 				instList.add(aItem.instances.get(j));
 			}
 		}
+		new InstVisualization(instList);
+		System.out.println("The whole instance number is " +instList.size());
+	}
+
+	public void itemsToInstances(List<item> leftList){
+		this.leftInstList = new ArrayList<instance>();
+
+		for(int i=0; i<leftList.size(); i++){
+			item aItem = leftList.get(i);
+			for(int j=0; j<aItem.instances.size(); j++){
+				leftInstList.add(aItem.instances.get(j));
+			}
+		}
 	}
 
 	public void partition(){
@@ -147,6 +162,15 @@ public class Intermediate{
 		for(int i=1; i<=numDiv; i++)
 			separator[i-1] = ((double)1/numDiv)*i;
 
+		Collections.sort(instList, new Comparator<instance>(){
+			
+			public int compare(instance a, instance b){
+				double ret = a.a_point.__coordinates[0] - b.a_point.__coordinates[0];
+				if(ret<=0) return -1;
+				else return 1;
+			}
+		});
+
 		divList = new ArrayList<ArrayList<instance> >();
 		for(int i=0; i<numDiv; i++)
 			divList.add(new ArrayList<instance>());
@@ -154,9 +178,16 @@ public class Intermediate{
 		 * paritition instances to numdiv groups, based on
 		 * the evenly distribution of x-axis;
 		 */	
+		int instCount = 0, iterCount = 1;
 		for(instance inst:instList){
-			double x = inst.a_point.__coordinates[0];		
-			divList.get(findLocOfSeparator(separator,x)).add(inst);
+			//double x = inst.a_point.__coordinates[0];		
+			//divList.get(findLocOfSeparator(separator,x)).add(inst);
+
+			instCount++;
+			if(instCount > iterCount*instList.size()/numDiv){
+				iterCount ++;
+			}
+			divList.get(iterCount-1).add(inst);
 		}
 
 		/*
@@ -182,23 +213,31 @@ public class Intermediate{
 		try{
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile));
 			for(int col = 0; col<divList.size(); col++){
+				int count = 0;
+				int iter = 0;
 				for(instance inst:divList.get(col) ){
 					StringBuffer sb = new StringBuffer();
 					sb.append(Integer.toString(col) + " ");
 					sb.append("R" + " " + instToString(inst));
 					write(bw, sb.toString());
+					count++;iter++;
 				}
+				// Through looking for the domination relationship, it finds the
+				// left bottem corner's instances.
 				instance.point max = maxList.get(col);
 				ArrayList<instance> coList = divList.get(col);
-				for(instance inst: instList){
+				for(instance inst: leftInstList){
 					if(coList.contains(inst)) continue;
 					if(inst.a_point.DominateAnother(max)){
 						StringBuffer sb = new StringBuffer();
 						sb.append(Integer.toString(col) + " ");
 						sb.append("L" + " " + instToString(inst));
 						write(bw, sb.toString());
+						count++;
 					}
 				}
+				System.out.println("in " + col +" this partition, instance size = "+ count);
+				System.out.println("in " + col +" this partition, iter size = "+ iter);
 			}
 		}
 		catch(IOException io){
@@ -207,7 +246,7 @@ public class Intermediate{
 	}
 
 	public void write(BufferedWriter bw, String aString) throws IOException{
-		bw.write(aString);	
+		bw.write(aString);
 	}
 
 	public String instToString(instance inst){
@@ -219,22 +258,23 @@ public class Intermediate{
 		return temp;
 	}
 
-
 	int findLocOfSeparator(double[] separ, double x){
-
 		int ret =0;
 		for(ret=0; ret<separ.length; ret++){
 			if(x<separ[ret]) break;
 		}
 		return ret;
 	}
-
+	
 	public static void main(String[] args){
 		Intermediate inter = new Intermediate(ClusterConfig.getInstance(), "../output");
 		inter.getItemList(inter.getSrcInstanceFile());
 		inter.readCandidates();
+		inter.itemsToInstances(inter.itemList);
 		inter.removeUnrelatedObjects();
 		inter.itemsToInstances();
 		inter.partition();
+
+		InstNaive naive = new InstNaive(null, inter.instList);
 	}
 }
