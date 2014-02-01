@@ -17,7 +17,7 @@ public class Main {
     jconf.setOutputPath(args[1]);
     jconf.setJarFilePath(args[2]);
     
-    jconf.setBlockSize(10000);
+    jconf.setBlockSize(1000000);
     
     jconf.setMapperClassName("example.FinalSky.WCMapper");
     jconf.setReducerClassName("example.FinalSky.WCReducer");

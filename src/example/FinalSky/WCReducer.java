@@ -18,7 +18,6 @@ public class WCReducer extends Reducer {
 			long sum = 0;
 			HashMap<Integer,item > aMap = new HashMap<Integer, item>(); 
 			ArrayList<instance> rList = new ArrayList<instance>();
-
 			InterClient client = new InterClient(ClusterConfig.getInstance()); 
 
 			while(values.hasNext()){
