@@ -44,5 +44,8 @@ public class WCReducer extends Reducer {
 
 			List<item> itemList = new ArrayList<item>(aMap.values());
 			client.comp(itemList, rList);
+			for(instance inst: rList){
+				out.collect(inst.toString(), "");
+			}
 		}
 }
