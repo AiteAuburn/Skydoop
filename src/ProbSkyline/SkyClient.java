@@ -8,6 +8,7 @@ import ProbSkyline.ProbSkyQuery.Prune3;
 
 import java.util.List;
 import java.util.HashMap;
+import java.util.ArrayList;
 
 public class SkyClient{
 
@@ -21,8 +22,10 @@ public class SkyClient{
 			aInst = new instance( Util.getInstID(div[1]), Util.getObjectID(div[0]), Util.getProb(div[div.length-1]), CC.dim);
 			aInst.setPoint(Util.getPoint(div, CC.dim));
 		}
-		else
-			System.out.println("Sth Wrong in creating instance.");
+		else{
+			System.out.println("div length = "+div.length + "  CC.dim = "+CC.dim);
+			System.out.println("Here's Wrong in creating instance.");
+		}
 	}
 
 	public SkyClient(ClusterConfig CC){
@@ -37,9 +40,10 @@ public class SkyClient{
 			inst= new instance( Util.getInstID(div[1]), Util.getObjectID(div[0]), Util.getProb(div[div.length-1]), CC.dim);
 			inst.setPoint(Util.getPoint(div, CC.dim));
 		}
-		else
-			System.out.println("Sth Wrong in creating instance.");
-
+		else{
+			System.out.println("div length = "+div.length + "  CC.dim = "+CC.dim);
+			System.out.println("Here's Wrong in creating instance.");
+		}
 		return inst;
 	}
 
@@ -52,6 +56,72 @@ public class SkyClient{
 
 		return -1;
 	}
+
+	/**
+	 * Based on the angular partitioning, space is divided into even parts.
+	 */
+	public int getPartition(){
+		if(aInst!= null){
+
+			/*
+			 * compute the length of the radius firstly.
+			 */
+			double r = 0.0;
+			double dim = aInst.dimension;
+			for(int i=0; i<dim; i++)
+				r += aInst.a_point.__coordinates[i] * aInst.a_point.__coordinates[i];
+
+			/*
+			 * Detailed computation procedure could be referred in Angle-based Space Partitioning for Efficient Parallel
+			 * Skyline Computation.
+			 */
+			double[] angle = new double[dim-1];
+			for(int i=0; i<angle.length; i++){
+				r -= aInst.a_point.__coordinates[i] * aInst.a_point.__coordinates[i];
+				double tanPhi = Math.sqrt(r)/aInst.a_point.__coordinates[i];
+				angle[i] = Math.atan(tanPhi);	
+			}
+
+			ArrayList< ArrayList<Double> > arrDouble = CC.arrDouble;
+
+			/*
+			 * Current partitioning scheme only supports two and three dimensional cases.
+			 */
+			if(dim == 2){
+
+				ArrayList<Double> angles = arrDouble.get(0);
+				for(int i=0; i<angles.size(); i++){
+					if(angles.get(i) > angle[0])	
+						return i;
+				}		
+				return -1;
+			}
+			else if(dim == 3){
+
+				ArrayList<Double> anglesX = arrDouble.get(0);
+				int partitionX = -1;
+				for(int i=0; i<anglesX.size(); i++){
+					if(anglesX.get(i) > angle[0])
+						partitionX = i;
+				}
+
+				ArrayList<Double> anglesY = arrDouble.get(1);
+				int partitionY = -1;
+				for(int i=0; i<anglesY.size(); i++){
+					if(anglesX.get(i) > angle[1])
+						partitionY = i;
+				}
+				if(partitionX == -1 || partitionY == -1)
+					return -1;
+				else{
+					int ret = partitionX * anglesX.size() + partitionY;
+					return ret;
+				}
+			}
+			return -1;
+		}
+	}
+
 
 	/**
 	 * Do Prunning work in an partition.

@@ -141,7 +141,7 @@ public class Intermediate{
 				instList.add(aItem.instances.get(j));
 			}
 		}
-		new InstVisualization(instList);
+		//new InstVisualization(instList);
 		System.out.println("The whole instance number is " +instList.size());
 	}
 
