@@ -31,7 +31,9 @@ public class ClusterConfig implements Serializable{
 	public int numWorkers;
 	public String configFile;
 	public double[] splitValue;
+	public int splitNum;
 	public int numDiv;
+	ArrayList< ArrayList<Double>> arrDouble;
 	transient static final int MaxSplitNum = 10;
 	
 	private static final ClusterConfig CC = new ClusterConfig();
@@ -88,6 +90,32 @@ public class ClusterConfig implements Serializable{
 		threshold = Double.parseDouble(prop.getProperty("threshold"));
 		this.srcName= prop.getProperty("srcName");
 		this.intermediate= prop.getProperty("intermediate");
+
+		arrDouble = new ArrayList< ArrayList<Double> >();
+		if(dim == 2){
+			ArrayList<Double> arr = new ArrayList<Double>();
+			for(int i=0; i<splitNum; i++){
+				arr.add(Math.PI/splitNum*(i+1));	
+			}
+			arrDouble.add(arr);
+		}
+		else if (dim == 3){
+			ArrayList<Double> arr = new ArrayList<Double>();
+			for(int i=0; i<3; i++){
+				arr.add(Math.PI/3*(i+1)/2);	
+			}
+			arrDouble.add(arr);
+
+			ArrayList<Double> arr2 = new ArrayList<Double>();
+			for(int i=0; i<splitNum/3; i++){
+				arr2.add(Math.PI/(splitNum/3)*(i+1)/2);	
+			}
+			arrDouble.add(arr2);
+
+		}
+		else
+			System.out.println("current partitioning scheme only support two or three dimension.");
 	}
+
 }
 
