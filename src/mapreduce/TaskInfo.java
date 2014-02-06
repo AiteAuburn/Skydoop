@@ -5,7 +5,7 @@ import java.io.Serializable;
  *
  */
 public abstract class TaskInfo implements Serializable {
-
+	private static final long serialVersionUID = 1L;
   /* the job id */
   private int jobID;
   

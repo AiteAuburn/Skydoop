@@ -50,12 +50,12 @@ public class SkyClient{
 	/**
 	 * Based on the instance's position, its partition number is computed.
 	 */	
-	public int getPartition(){
-		if(aInst != null)
-			return aInst.partition(CC.splitValue, CC.numWorkers);	
+	//public int getPartition(){
+		//if(aInst != null)
+			//return aInst.partition(CC.splitValue, CC.numWorkers);	
 
-		return -1;
-	}
+		//return -1;
+	/*}*/
 
 	/**
 	 * Based on the angular partitioning, space is divided into even parts.
@@ -86,6 +86,7 @@ public class SkyClient{
 
 			/*
 			 * Current partitioning scheme only supports two and three dimensional cases.
+			 * if the returned value is -1, it denotes that sth wrong happened in the get partition number Process.
 			 */
 			if(dim == 2){
 

@@ -196,6 +196,7 @@ public class ReducerWorker extends Worker {
     SLEEP_CYCLE = Integer.parseInt(Utility.getParam("REDUCER_CHECK_MAPPER_CYCLE"));
   }
 
+
   /**
    * locate all mapper's output files for this reducer
    * 
@@ -242,6 +243,7 @@ public class ReducerWorker extends Worker {
 
     return result;
   }
+
 
   /**
    * read and parse all key/value pairs from mapper's output files

@@ -13,7 +13,7 @@ import java.util.Map;
  * speaking, this is the communication module for job tracker
  */
 public class JobTrackerServices extends UnicastRemoteObject implements StatusUpdater,
-        JobTrackerJobSubmitter, MapStatusChecker {
+        JobTrackerJobSubmitter, MapStatusChecker, FileTransfer {
 
   private JobTracker jobTracker;
 
@@ -130,6 +130,15 @@ public class JobTrackerServices extends UnicastRemoteObject implements StatusUpd
   public int requestJobID() throws RemoteException {
     return this.jobTracker.requestJobId();
   }
+  
+  /**
+   * the method to transfer file to TaskTracker
+   */
+  @Override
+  public boolean requestJobID() throws RemoteException {
+    return this.jobTracker.requestJobId();
+  }
+
 
   /**
    * the method to submit a job
