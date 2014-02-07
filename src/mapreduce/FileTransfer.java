@@ -10,6 +10,6 @@ import java.rmi.RemoteException;
  */
 public interface FileTransfer extends Remote {
 	
-	public boolean transfer(String path) throws RemoteException;
+	public boolean transfer(String path, String ttName) throws RemoteException;
 
 }

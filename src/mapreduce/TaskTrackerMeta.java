@@ -14,6 +14,10 @@ public class TaskTrackerMeta {
 
 	private int numOfReducerSlots;
 
+	public String tthost;
+	public int dataPort;
+	public int msgPort;
+
 	private long timestamp;
 
 	private TaskLauncher taskLauncher;
@@ -43,6 +47,18 @@ public class TaskTrackerMeta {
 
 	public int getNumOfReducerSlots() {
 		return numOfReducerSlots;
+	}
+
+	public void setTTHost(String tthost){
+		this.tthost = tthost;	
+	}
+
+	public void setDataPort(String dataPort){
+		this.dataPort= Integer.parseInt(dataPort);
+	}
+
+	public void setMsgPort(String msgPort){
+		this.msgPort= Integer.parseInt(msgPort);
 	}
 
 	public void setNumOfReducerSlots(int numOfReducerSlots) {
