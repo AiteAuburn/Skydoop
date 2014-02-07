@@ -13,6 +13,7 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 
   /* reference to the task tracker */
   private TaskTracker taskTracker;
+	public boolean isJarTransfered = false;
 
   /**
    * constructor method
@@ -33,6 +34,12 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
    * @return the task is submitted successfully or not
    */
   public boolean runTask(TaskInfo taskInfo) throws RemoteException {
+
+		while(isJarTransfered == false){
+			taskTracker.downloadJar();
+		}
+
+
     /* if this is a mapper task */
     if (taskInfo.getType() == TaskMeta.TaskType.MAPPER) {
       MapperTaskInfo mapperTaskInfo = (MapperTaskInfo) taskInfo;

@@ -36,6 +36,7 @@ public class TaskTracker {
 
   /* the service from job tracker, used to */
   private StatusUpdater jobTrackerStatusUpdater;
+  private FileTransfer jobTrackerFileTransfer;
 
   private HashMap<Integer, TaskProgress> taskStatus;
 
@@ -79,6 +80,8 @@ public class TaskTracker {
     try {
       Registry reg = LocateRegistry.getRegistry(registryHostName, registryPort);
       jobTrackerStatusUpdater = (StatusUpdater) reg.lookup(Utility
+              .getParam("JOB_TRACKER_SERVICE_NAME"));
+      jobTrackerFileTransfer = (FileTransfer) reg.lookup(Utility
               .getParam("JOB_TRACKER_SERVICE_NAME"));
     } catch (RemoteException e) {
       e.printStackTrace();
@@ -184,6 +187,11 @@ public class TaskTracker {
   public int getRPort() {
     return this.rPort;
   }
+
+	public boolean downloadJar(){
+		
+		
+	}
 
   public static void main(String[] args) {
     if (args.length != 1) {

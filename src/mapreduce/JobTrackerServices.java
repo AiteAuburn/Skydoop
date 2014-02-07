@@ -153,9 +153,11 @@ public class JobTrackerServices extends UnicastRemoteObject implements StatusUpd
 		public boolean transfer(String path, String ttName) throws RemoteException {
 
 			TaskTrackerMeta ttm = this.jobTracker.getTaskTracker(ttName);
+			Socket data=null;
+			Socket msg = null;
 			try {
-				Socket data = new Socket(ttm.tthost, ttm.dataPort);
-				Socket msg = new Socket(ttm.tthost, ttm.msgPort);
+				data = new Socket(ttm.tthost, ttm.dataPort);
+				msg = new Socket(ttm.tthost, ttm.msgPort);
 				System.out.println("Client listening...");
 			} catch (IOException e) {
 				System.out.println("Could not listen " + e);
@@ -168,7 +170,8 @@ public class JobTrackerServices extends UnicastRemoteObject implements StatusUpd
 				msgIn = new BufferedReader(new InputStreamReader(msg.getInputStream()));
 				msgOut = new PrintWriter(msg.getOutputStream(), true);
 
-				File file = new File(this.openFile);
+				File file = new File(path);
+				String saveFile = "/home/liang/Desktop/aosidjf";
 				msgOut.println("u:" + file.getName() + ":" + saveFile);
 				BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
 				BufferedOutputStream out = new BufferedOutputStream(data.getOutputStream());
