@@ -36,97 +36,102 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
   public boolean runTask(TaskInfo taskInfo) throws RemoteException {
 
 		while(isJarTransfered == false){
-			taskTracker.downloadJar();
+			isJarTransfered = taskTracker.downloadJar();
+			try{
+				Thread.sleep(1000);
+				System.out.println("it is transferring jar File from jobtracker to tasktracker.");
+			}catch(InterruptedException e){
+				e.printStackTrace();	
+			}
 		}
 
+		/* if this is a mapper task */
+		if (taskInfo.getType() == TaskMeta.TaskType.MAPPER) {
+			MapperTaskInfo mapperTaskInfo = (MapperTaskInfo) taskInfo;
+			/* lock the mapper counter */
+			synchronized (taskTracker.mapperCounter) {
 
-    /* if this is a mapper task */
-    if (taskInfo.getType() == TaskMeta.TaskType.MAPPER) {
-      MapperTaskInfo mapperTaskInfo = (MapperTaskInfo) taskInfo;
-      /* lock the mapper counter */
-      synchronized (taskTracker.mapperCounter) {
+				/* if there is free mapper slots */
+				if (taskTracker.mapperCounter < taskTracker.NUM_OF_MAPPER_SLOTS) {
 
-        /* if there is free mapper slots */
-        if (taskTracker.mapperCounter < taskTracker.NUM_OF_MAPPER_SLOTS) {
+					/* do some logging */
+					System.out.println("task tracker " + this.taskTracker.getTaskTrackerName()
+							+ " received runTask request taskid:" + taskInfo.getTaskID() + " "
+							+ taskInfo.getType());
 
-          /* do some logging */
-          System.out.println("task tracker " + this.taskTracker.getTaskTrackerName()
-                  + " received runTask request taskid:" + taskInfo.getTaskID() + " "
-                  + taskInfo.getType());
+					/* increase number of mapper running on this task tracker */
+					taskTracker.mapperCounter++;
 
-          /* increase number of mapper running on this task tracker */
-          taskTracker.mapperCounter++;
+					/* start new process */
+					String[] args = new String[] { MapperWorker.class.getName(),
+						String.valueOf(mapperTaskInfo.getTaskID()), mapperTaskInfo.getInputPath(),
+						String.valueOf(mapperTaskInfo.getOffset()),
+						String.valueOf(mapperTaskInfo.getBlockSize()), mapperTaskInfo.getOutputPath(),
+						mapperTaskInfo.getMapper(), mapperTaskInfo.getPartitioner(),
+						mapperTaskInfo.getInputFormat(), String.valueOf(mapperTaskInfo.getReducerNum()),
+						taskTracker.getTaskTrackerName(), String.valueOf(taskTracker.getRPort()) };
+					try {
+						Utility.startJavaProcess(args, taskInfo.getJobID());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return true;
+				} else {
+					return false;
+				}
+			}
+		} else {
+			/* this is a reducer task */
+			ReducerTaskInfo reducerTaskInfo = (ReducerTaskInfo) taskInfo;
 
-          /* start new process */
-          String[] args = new String[] { MapperWorker.class.getName(),
-              String.valueOf(mapperTaskInfo.getTaskID()), mapperTaskInfo.getInputPath(),
-              String.valueOf(mapperTaskInfo.getOffset()),
-              String.valueOf(mapperTaskInfo.getBlockSize()), mapperTaskInfo.getOutputPath(),
-              mapperTaskInfo.getMapper(), mapperTaskInfo.getPartitioner(),
-              mapperTaskInfo.getInputFormat(), String.valueOf(mapperTaskInfo.getReducerNum()),
-              taskTracker.getTaskTrackerName(), String.valueOf(taskTracker.getRPort()) };
-          try {
-            Utility.startJavaProcess(args, taskInfo.getJobID());
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-          return true;
-        } else {
-          return false;
-        }
-      }
-    } else {
-      /* this is a reducer task */
-      ReducerTaskInfo reducerTaskInfo = (ReducerTaskInfo) taskInfo;
+			/* lock the reducer counter */
+			synchronized (taskTracker.reducerCounter) {
+				/* if there is free reducer slots */
+				if (taskTracker.reducerCounter < taskTracker.NUM_OF_REDUCER_SLOTS) {
 
-      /* lock the reducer counter */
-      synchronized (taskTracker.reducerCounter) {
-        /* if there is free reducer slots */
-        if (taskTracker.reducerCounter < taskTracker.NUM_OF_REDUCER_SLOTS) {
+					/* do some logging */
+					System.out.println("task tracker " + this.taskTracker.getTaskTrackerName()
+							+ " received runTask request taskid:" + taskInfo.getTaskID() + " "
+							+ taskInfo.getType());
 
-          /* do some logging */
-          System.out.println("task tracker " + this.taskTracker.getTaskTrackerName()
-                  + " received runTask request taskid:" + taskInfo.getTaskID() + " "
-                  + taskInfo.getType());
+					/* increase the number of reducer running on this task tracker */
+					taskTracker.reducerCounter++;
 
-          /* increase the number of reducer running on this task tracker */
-          taskTracker.reducerCounter++;
+					/* start new process */
+					String[] args = new String[] { ReducerWorker.class.getName(),
+						String.valueOf(reducerTaskInfo.getTaskID()),
+						String.valueOf(reducerTaskInfo.getOrderId()), reducerTaskInfo.getReducer(),
+						reducerTaskInfo.getOutputFormat(), reducerTaskInfo.getInputPath(),
+						reducerTaskInfo.getOutputPath(), taskTracker.getTaskTrackerName(),
+						String.valueOf(taskTracker.getRPort()) };
+					try {
+						Utility.startJavaProcess(args, taskInfo.getJobID());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return true;
+				} else {
+					return false;
+				}
+			}
+		}
+	}
 
-          /* start new process */
-          String[] args = new String[] { ReducerWorker.class.getName(),
-              String.valueOf(reducerTaskInfo.getTaskID()),
-              String.valueOf(reducerTaskInfo.getOrderId()), reducerTaskInfo.getReducer(),
-              reducerTaskInfo.getOutputFormat(), reducerTaskInfo.getInputPath(),
-              reducerTaskInfo.getOutputPath(), taskTracker.getTaskTrackerName(),
-              String.valueOf(taskTracker.getRPort()) };
-          try {
-            Utility.startJavaProcess(args, taskInfo.getJobID());
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-          return true;
-        } else {
-          return false;
-        }
-      }
-    }
-  }
+	/**
+	 * this method is called by task worker to update task status to task tracker
+	 */
+	public void update(Object statuspck) throws RemoteException {
+		if (statuspck.getClass().getName() != TaskProgress.class.getName())
+			return;
+		TaskProgress taskProgress = (TaskProgress) statuspck;
+		/* do some logging */
+		System.out.println(System.currentTimeMillis() + " Receive update from worker "
+				+ taskProgress.getTaskID() + " : " + taskProgress.getStatus());
 
-  /**
-   * this method is called by task worker to update task status to task tracker
-   */
-  public void update(Object statuspck) throws RemoteException {
-    if (statuspck.getClass().getName() != TaskProgress.class.getName())
-      return;
-    TaskProgress taskProgress = (TaskProgress) statuspck;
-    /* do some logging */
-    System.out.println(System.currentTimeMillis() + " Receive update from worker "
-            + taskProgress.getTaskID() + " : " + taskProgress.getStatus());
-
-    /* update the status to task tracker */
-    Map<Integer, TaskProgress> taskStatus = this.taskTracker.getTaskStatus();
-    synchronized (taskStatus) {
-      taskStatus.put(taskProgress.getTaskID(), taskProgress);
-    }
-  }
+		/* update the status to task tracker */
+		Map<Integer, TaskProgress> taskStatus = this.taskTracker.getTaskStatus();
+		synchronized (taskStatus) {
+			taskStatus.put(taskProgress.getTaskID(), taskProgress);
+		}
+	}
 }

@@ -21,7 +21,7 @@ import java.net.Socket;
  * @author Liang  Tang
  * @date Feb 2014
  */
-public class FileTransferServer{
+public class FileTransferServer implements Runnable{
 	ServerSocket server = null;
 	ServerSocket msgServer = null;
 	int dataPort;
@@ -32,7 +32,7 @@ public class FileTransferServer{
 		this.msgPort = msgPort;
 	}
 
-	public void listenSocket() {
+	public void run() {
 		try {
 			server = new ServerSocket(dataPort);
 			msgServer = new ServerSocket(msgPort);
@@ -41,16 +41,15 @@ public class FileTransferServer{
 			System.out.println("Could not listen " + e);
 			System.exit(-1);
 		}
-		while (true) {
-			ClientWorker w;
-			try {
-				w = new ClientWorker(server.accept(), msgServer.accept());
-				System.out.println("Client accepted.");
-				Thread t = new Thread(w);
-				t.start();
-			} catch (IOException e) {
-				System.out.println("Accept failed " + e);
-			}
+
+		ClientWorker w;
+		try {
+			w = new ClientWorker(server.accept(), msgServer.accept());
+			System.out.println("Client accepted.");
+			Thread t = new Thread(w);
+			t.start();
+		} catch (IOException e) {
+			System.out.println("Accept failed " + e);
 		}
 	}
 
@@ -67,8 +66,8 @@ public class FileTransferServer{
 	}
 
 	public static void main(String[] args) {
-		FileTransferServer prog = new FileTransferServer(4444, 4445);
-		prog.listenSocket();
+		//FileTransferServer prog = new FileTransferServer(4444, 4445);
+		//prog.listenSocket();
 	}
 }
 

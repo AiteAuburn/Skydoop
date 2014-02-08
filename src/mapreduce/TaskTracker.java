@@ -184,21 +184,49 @@ public class TaskTracker {
     this.taskTrackerName = taskTrackerName;
   }
 
-  public int getRPort() {
+  public int getRPort(){
     return this.rPort;
   }
 
+
+	/**
+	 * The downloadJar procedure firstly start the server thread; Then,
+	 * it remotely calls the client in JobTrackerServices to transmit
+	 * jar File.
+	 * It will wait until server.join() .
+	 */
 	public boolean downloadJar(){
 		
-		
+		String Path = Utility.getParam("Jar_Path");
+		String dataPort = Utility.getParam(taskTrackerName+"_dataPort");
+		String msgPort = Utility.getParam(taskTrackerName+"_msgPort");
+
+		Thread server = new Thread(new FileTransferServer(Integer.parseInt(dataPort), Integer.parseInt(msgPort)));
+		server.start();
+
+		if (Path!= null)
+			try {
+				return jobTrackerFileTransfer.transfer(Path, taskTrackerName);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+
+		try{
+		server.join();
+		}
+		catch(InterruptedException e){
+			e.printStackTrace();
+		}
+		return false;
 	}
 
-  public static void main(String[] args) {
-    if (args.length != 1) {
-      System.err.println("illegal arguments");
-      return;
-    }
-    TaskTracker tt = new TaskTracker(Integer.parseInt(args[0]));
-    tt.run();
-  }
+
+	public static void main(String[] args) {
+		if (args.length != 1) {
+			System.err.println("illegal arguments");
+			return;
+		}
+		TaskTracker tt = new TaskTracker(Integer.parseInt(args[0]));
+		tt.run();
+	}
 }
