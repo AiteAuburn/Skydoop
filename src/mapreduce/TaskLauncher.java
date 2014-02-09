@@ -7,4 +7,6 @@ import java.rmi.RemoteException;
  */
 public interface TaskLauncher extends Remote {
   boolean runTask(TaskInfo taskinfo) throws RemoteException;
+
+	boolean fileTransfer(int orderId) throws RemoteException;
 }

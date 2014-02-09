@@ -204,6 +204,31 @@ public class JobTrackerServices extends UnicastRemoteObject implements StatusUpd
 		}
 
 	/**
+	 * the method is to transfer temp files outputed after mapper phase, and call
+	 * every tasktracker to call transfer procedure to the reducerworker.
+	 */
+	@Override
+		public boolean transferFolder(int orderId) throws RemoteException {
+
+			TaskTrackerMeta ttm = this.jobTracker.getTaskTracker(ttName);
+
+			for(Entry<String, TaskTrackerMeta> entry: jobTracker.tasktrackers.entrySet()){
+				
+				TaskTrackerMeta targetTasktracker = entry.getValue();
+				boolean res = false;
+				try{
+					res = targetTasktracker.getTaskLauncher().runTask(task.getTaskInfo());
+				} catch (Exception e){
+					e.printStackTrace();	
+				}
+				if(res == false) return false;
+			}
+
+			return true;
+		}
+
+
+	/**
 	 * the method to submit a job
 	 */
 	@Override

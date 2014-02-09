@@ -12,4 +12,10 @@ public interface FileTransfer extends Remote {
 	
 	public boolean transfer(String path, String ttName) throws RemoteException;
 
+	/**
+	 * transferFolder is a method which transfers temp files outputed by mapper
+	 * phase to reducerworkers.
+	 */
+	public boolean transferFolder(int orderID) throws RemoteException;
+
 }
