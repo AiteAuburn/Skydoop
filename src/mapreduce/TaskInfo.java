@@ -38,5 +38,4 @@ public abstract class TaskInfo implements Serializable {
   public TaskMeta.TaskType getType() {
     return type;
   }
-
 }

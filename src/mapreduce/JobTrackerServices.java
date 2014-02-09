@@ -158,7 +158,7 @@ public class JobTrackerServices extends UnicastRemoteObject implements StatusUpd
 			try {
 				data = new Socket(ttm.tthost, ttm.dataPort);
 				msg = new Socket(ttm.tthost, ttm.msgPort);
-				System.out.println("Client listening...");
+				System.out.println("FileTransferClient listening...");
 			} catch (IOException e) {
 				System.out.println("Could not listen " + e);
 			}
@@ -171,14 +171,17 @@ public class JobTrackerServices extends UnicastRemoteObject implements StatusUpd
 				msgOut = new PrintWriter(msg.getOutputStream(), true);
 
 				File file = new File(path);
-				String saveFile = "/home/liang/Desktop/aosidjf";
+				String saveFile = path;
 				msgOut.println("u:" + file.getName() + ":" + saveFile);
 				BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
 				BufferedOutputStream out = new BufferedOutputStream(data.getOutputStream());
 				write(in, out);
+				out.flush();
+				out.close();
+				in.close();
 				// TODO issue with waiting for response
 				if (msgIn.readLine().equals("200")) {
-					System.out.println(file.getName() + " received by server.");
+					System.out.println(file.getName() + " received by a TaskTracker.");
 					return true;
 				} else {
 					System.out.println("Unsuccessful... Please try again.");

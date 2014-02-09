@@ -90,5 +90,4 @@ public class TaskTrackerMeta {
 	public boolean isAlive() {
 		return (System.currentTimeMillis() - this.timestamp <= ALIVE_CYCLE);
 	}
-
 }

@@ -5,6 +5,13 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.io.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.Enumeration;
+
 
 /**
  * This class is the rmi services provided by task tracker
@@ -14,6 +21,7 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
   /* reference to the task tracker */
   private TaskTracker taskTracker;
 	public boolean isJarTransfered = false;
+
 
   /**
    * constructor method
@@ -25,6 +33,7 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
     super();
     this.taskTracker = taskTracker;
   }
+
 
   /**
    * This method is called by job tracker to assign task to task tracker
@@ -43,6 +52,13 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 			}catch(InterruptedException e){
 				e.printStackTrace();	
 			}
+		}
+		String [] div= Utility.getParam("Jar_Path").split("/");
+		String newFilePath = getSystemTempDir()+File.separator+div[div.length-1];
+		int jobID = taskInfo.getJobID();
+		if( extractJobClassJar(jobID, newFilePath) == false){
+			System.out.println("ExtractJobClassJar doesn't work in this Machine.");	
+			return false;
 		}
 
 		/* if this is a mapper task */
@@ -115,6 +131,7 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 				}
 			}
 		}
+		return true;
 	}
 
 	/**
@@ -134,4 +151,71 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 			taskStatus.put(taskProgress.getTaskID(), taskProgress);
 		}
 	}
+
+  /**
+   * extract the jar file into the system's ClassPath folder
+   * 
+   * @param jobid
+   * @param jarpath
+   * @return
+   */
+  public boolean extractJobClassJar(int jobid, String jarpath) {
+	  try {
+		  JarFile jar = new JarFile(jarpath);
+		  Enumeration enums = jar.entries();
+
+		  // find the path to which the jar file should be extracted
+		  String destDirPath =Utility.getParam("USER_CLASS_PATH") + File.separator + "job" + jobid + File.separator;
+		  File destDir = new File(destDirPath);
+			if (!destDir.exists()) {
+				destDir.mkdirs();
+
+				// copy each file in jar archive one by one
+				while (enums.hasMoreElements()) {
+					JarEntry file = (JarEntry) enums.nextElement();
+
+					File outputfile = new File(destDirPath + file.getName());
+					if (file.isDirectory()) {
+						outputfile.mkdirs();
+						continue;
+					}
+					InputStream is = jar.getInputStream(file);
+					FileOutputStream fos = null;
+					try {
+						fos = new FileOutputStream(outputfile);
+					} catch (FileNotFoundException e) {
+						outputfile.getParentFile().mkdirs();
+						fos = new FileOutputStream(outputfile);
+					}
+					while (is.available() > 0) {
+						fos.write(is.read());
+					}
+					fos.close();
+					is.close();
+				}
+			}
+		} catch (IOException e) {
+			// TODO : handle this exception if the jar file cannot be found
+			return false;
+		}
+		return true;
+	}
+
+  /**
+   * get the system's temporary dir which holds mapper's output
+   * 
+   * @return
+   */
+  public static String getSystemTempDir() {
+    String res = Utility.getParam("SYSTEM_TEMP_DIR");
+    if (res.compareTo("") == 0)
+      res = System.getProperty("java.io.tmpdir");
+
+    File tmpdir = new File(res);
+    if (!tmpdir.exists()) {
+      tmpdir.mkdirs();
+    }
+
+    return res;
+  }
 }

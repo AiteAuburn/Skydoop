@@ -9,6 +9,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -196,7 +197,7 @@ public class TaskTracker {
 	 * It will wait until server.join() .
 	 */
 	public boolean downloadJar(){
-		
+
 		String Path = Utility.getParam("Jar_Path");
 		String dataPort = Utility.getParam(taskTrackerName+"_dataPort");
 		String msgPort = Utility.getParam(taskTrackerName+"_msgPort");
@@ -212,12 +213,35 @@ public class TaskTracker {
 			}
 
 		try{
-		server.join();
+			server.join();
 		}
 		catch(InterruptedException e){
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	/**
+	 * the command line tool to control the job tracker
+	 */
+	public void controlConsole() {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println(">> ");
+		while (scanner.hasNext()) {
+
+			System.out.println(">> ");
+			String line = scanner.nextLine().trim();
+			String[] fields = line.split(" ");
+			String cmd = fields[0];
+
+			if(cmd.compareTo("send") == 0) {
+				downloadJar();
+			} else if (cmd.compareTo("quit") == 0) {
+				System.exit(0);
+			} else if (cmd.compareTo("help") == 0) {
+
+			}
+		}
 	}
 
 
@@ -228,5 +252,6 @@ public class TaskTracker {
 		}
 		TaskTracker tt = new TaskTracker(Integer.parseInt(args[0]));
 		tt.run();
+		tt.controlConsole();
 	}
 }

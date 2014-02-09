@@ -36,7 +36,7 @@ public class FileTransferServer implements Runnable{
 		try {
 			server = new ServerSocket(dataPort);
 			msgServer = new ServerSocket(msgPort);
-			System.out.println("Server listening...");
+			System.out.println("FileTransferServer listening...");
 		} catch (IOException e) {
 			System.out.println("Could not listen " + e);
 			System.exit(-1);
@@ -45,7 +45,7 @@ public class FileTransferServer implements Runnable{
 		ClientWorker w;
 		try {
 			w = new ClientWorker(server.accept(), msgServer.accept());
-			System.out.println("Client accepted.");
+			//System.out.println("Client accepted.");
 			Thread t = new Thread(w);
 			t.start();
 		} catch (IOException e) {
@@ -134,6 +134,24 @@ class ClientWorker implements Runnable {
 		return ret && path.delete();
 	}
 
+  /**
+   * get the system's temporary dir which holds mapper's output
+   * 
+   * @return
+   */
+  public static String getSystemTempDir() {
+    String res = Utility.getParam("SYSTEM_TEMP_DIR");
+    if (res.compareTo("") == 0)
+      res = System.getProperty("java.io.tmpdir");
+
+    File tmpdir = new File(res);
+    if (!tmpdir.exists()) {
+      tmpdir.mkdirs();
+    }
+
+    return res;
+  }
+
 	public void cleanUp() {
 		try {
 			msgIn.close();
@@ -162,10 +180,12 @@ class ClientWorker implements Runnable {
 				} else {
 					if (cmd[0].equals("u") && cmd[2] != null) {
 
-						System.out.println("Receiving file from client");
-						file = new File(cmd[2]);
+						//System.out.println("Receiving file from client");
+						String [] div= cmd[2].split("/");
+						String newFileName = getSystemTempDir()+File.separator+div[div.length-1];
+						file = new File(newFileName);
 						receiveFile(file);
-
+						//System.out.println("after Receiving File");
 						// Let client know it has been received
 						msgOut.println("200");
 

@@ -343,5 +343,4 @@ public class ReducerWorker extends Worker {
             taskTrackerServiceName, rPort);
     worker.run();
   }
-
 }

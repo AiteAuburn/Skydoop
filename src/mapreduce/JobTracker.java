@@ -546,6 +546,16 @@ public class JobTracker {
 			  System.exit(0);
 		  } else if (cmd.compareTo("help") == 0) {
 
+		  } else if (cmd.compareTo("call") == 0) {
+
+				TaskInfo testInfo = new MapperTaskInfo(123, 234, "sdf", 1234, 2345, "sdf", "34", "45", "56", 56);
+				try{
+					if(tasktrackers.get("tt1").getTaskLauncher().runTask(testInfo) == false)
+						System.out.println("TaskTracker doesn't execute the task well");
+				}
+				catch(RemoteException re){
+					re.printStackTrace();	
+				}
 		  }
 	  }
   }
