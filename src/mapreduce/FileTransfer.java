@@ -1,6 +1,7 @@
 package mapreduce;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 /**
  * This interface is used for clients to send HeartBeat to the server, in a 
@@ -16,6 +17,7 @@ public interface FileTransfer extends Remote {
 	 * transferFolder is a method which transfers temp files outputed by mapper
 	 * phase to reducerworkers.
 	 */
-	public boolean transferFolder(int orderID) throws RemoteException;
 
+	public boolean transferFolder(int orderID) throws RemoteException;
+	public boolean transferFolder(int orderID, Map<Integer, TaskMeta> mapTasks, Map<String, TaskMeta> tasktrackers, String jobPath) throws RemoteException;
 }

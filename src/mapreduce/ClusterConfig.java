@@ -33,7 +33,7 @@ public class ClusterConfig implements Serializable{
 	public double[] splitValue;
 	public int splitNum;
 	public int numDiv;
-	ArrayList< ArrayList<Double>> arrDouble;
+	public ArrayList< ArrayList<Double>> arrDouble;
 	transient static final int MaxSplitNum = 10;
 	
 	private static final ClusterConfig CC = new ClusterConfig();

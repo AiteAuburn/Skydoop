@@ -7,6 +7,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import java.net.Socket;
 import java.net.InetAddress;
@@ -210,14 +211,12 @@ public class JobTrackerServices extends UnicastRemoteObject implements StatusUpd
 	@Override
 		public boolean transferFolder(int orderId) throws RemoteException {
 
-			TaskTrackerMeta ttm = this.jobTracker.getTaskTracker(ttName);
-
-			for(Entry<String, TaskTrackerMeta> entry: jobTracker.tasktrackers.entrySet()){
+			for(Entry<String, TaskTrackerMeta> entry: jobTracker.getTaskTrackers().entrySet()){
 				
 				TaskTrackerMeta targetTasktracker = entry.getValue();
 				boolean res = false;
 				try{
-					res = targetTasktracker.getTaskLauncher().runTask(task.getTaskInfo());
+					res = targetTasktracker.getTaskLauncher().fileTransfer(orderId);
 				} catch (Exception e){
 					e.printStackTrace();	
 				}
@@ -227,7 +226,11 @@ public class JobTrackerServices extends UnicastRemoteObject implements StatusUpd
 			return true;
 		}
 
-
+    public boolean transferFolder(int a,Map<Integer,TaskMeta> b,Map<String,TaskMeta> c,String d)
+				throws RemoteException{
+			//---------Emptry Method, since no one will call it.
+			return true;				
+		}
 	/**
 	 * the method to submit a job
 	 */

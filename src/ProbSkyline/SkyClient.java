@@ -67,7 +67,7 @@ public class SkyClient{
 			 * compute the length of the radius firstly.
 			 */
 			double r = 0.0;
-			double dim = aInst.dimension;
+			int dim = aInst.dimension;
 			for(int i=0; i<dim; i++)
 				r += aInst.a_point.__coordinates[i] * aInst.a_point.__coordinates[i];
 
@@ -119,8 +119,8 @@ public class SkyClient{
 					return ret;
 				}
 			}
-			return -1;
 		}
+			return -1;
 	}
 
 

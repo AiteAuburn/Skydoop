@@ -105,7 +105,7 @@ public class Intermediate{
 		try{
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			String line = br.readLine();
-			while( line != null){
+			while(line != null){
 				String[] oneLine = line.split("\t");
 				cands.add( Integer.parseInt(oneLine[0]));
 				line = br.readLine();
@@ -270,8 +270,8 @@ public class Intermediate{
 		Intermediate inter = new Intermediate(ClusterConfig.getInstance(), "../output");
 		inter.getItemList(inter.getSrcInstanceFile());
 		inter.readCandidates();
-		inter.itemsToInstances(inter.itemList);
 		inter.removeUnrelatedObjects();
+		inter.itemsToInstances(inter.itemList);
 		inter.itemsToInstances();
 		inter.partition();
 

@@ -1,6 +1,5 @@
 package mapreduce;
 
-import java.io.IOException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -8,9 +7,15 @@ import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.io.*;
+
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import java.net.Socket;
+import java.net.InetAddress;
 
 
 /**
@@ -131,13 +136,113 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 				}
 			}
 		}
+	}
+
+	public boolean transfer(String path, String ttName) throws RemoteException{
+		//Empty method, as no one will call this.	
+		return false;
+	}
+
+	public boolean fileTransfer(int id) throws RemoteException{
+		//Empty method, as no one will call this.	
+		return false;
+	}
+
+  /**
+   * This method is called by job tracker to assign task to task tracker
+   * 
+   * @param taskInfo
+   *          : the information about the task
+   * @return the task is submitted successfully or not
+   */
+	public boolean transferFolder(int orderId, Map<Integer, TaskMeta> mapTasks, Map<String, TaskTrackerMeta> tasktrackers, String jobPath) throws RemoteException {
+
+		/*
+		 * since tasktracker doesn't distinguish the diff between maptask and reducetasks
+		 * we have to refer to jobtrackers' info to differentiate them.
+		 * if mapTasks has the taskID, then, we know this task is a maptask and also in this taskTracker.
+		 */
+		Map<Integer, TaskProgress> taskStatus = this.taskTracker.getTaskStatus();
+		synchronized (taskStatus) {
+			for(Entry<Integer, TaskProgress> entry: taskStatus.entrySet()){
+				int key = entry.getKey();
+				if(mapTasks.containsKey(key) == true){
+					String taskMapperOutputPath = getSystemTempDir() + File.separator + jobPath 
+							 + "/mapper_output_task_" + key+File.separator+ "part-" + orderId;
+
+					if(sendFile(taskMapperOutputPath, tasktrackers, key) == false)
+						return false;
+				}
+			}
+		}
 		return true;
 	}
 
-	public transferFolder(int orderId) throws RemoteException {
+	public boolean sendFile(String filePath, Map<String, TaskTrackerMeta> tasktrackers, int taskId){
 		
-			
+		File file = new File(filePath);
+		if(!file.exists()) return true;
+
+		/*
+		 * if the file (part-X) exist, we send it to all tasktrackers.
+		 */
+		for(Entry<String, TaskTrackerMeta> entry: tasktrackers.entrySet()){
+			TaskTrackerMeta ttm = entry.getValue();
+			Socket data=null;
+			Socket msg = null;
+			try {
+				data = new Socket(ttm.tthost, ttm.dataPort);
+				msg = new Socket(ttm.tthost, ttm.msgPort);
+				System.out.println("FileTransferClient listening...");
+			} catch (IOException e) {
+				System.out.println("Could not listen " + e);
+			}
+
+			BufferedReader msgIn = null;
+			PrintWriter msgOut = null;
+
+			try {
+				msgIn = new BufferedReader(new InputStreamReader(msg.getInputStream()));
+				msgOut = new PrintWriter(msg.getOutputStream(), true);
+
+				//---saveFiles is the path for file path in the target machine.
+				String saveFile = getSystemTempDir() + File.separator + "ReducerInput" 
+												  + File.separator + taskId + "-" 
+													+ filePath.charAt(filePath.length()-1);
+
+				msgOut.println("u:" + file.getName() + ":" + saveFile);
+				BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
+				BufferedOutputStream out = new BufferedOutputStream(data.getOutputStream());
+				JobTrackerServices.write(in, out);
+				out.flush();
+				out.close();
+				in.close();
+
+				// TODO issue with waiting for response
+				if (msgIn.readLine().equals("200")) {
+					System.out.println(file.getName() + " received by a TaskTracker.");
+				} else {
+					System.out.println("Unsuccessful send file... Please try again.");
+					return false;
+				}
+
+			} catch (IOException e) {
+				System.out.println(e + "...");
+			} catch (NullPointerException e) {
+				System.out.println(e + "...");
+				e.printStackTrace();
+			} finally {
+				try {
+					data.close();
+					msg.close();
+				} catch (IOException e) {
+					System.out.println(e + "...");
+				}
+			}
+		}
+		return true;
 	}
+
 
 	/**
 	 * this method is called by task worker to update task status to task tracker
@@ -157,21 +262,22 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 		}
 	}
 
-  /**
-   * extract the jar file into the system's ClassPath folder
-   * 
-   * @param jobid
-   * @param jarpath
-   * @return
-   */
-  public boolean extractJobClassJar(int jobid, String jarpath) {
-	  try {
-		  JarFile jar = new JarFile(jarpath);
-		  Enumeration enums = jar.entries();
 
-		  // find the path to which the jar file should be extracted
-		  String destDirPath =Utility.getParam("USER_CLASS_PATH") + File.separator + "job" + jobid + File.separator;
-		  File destDir = new File(destDirPath);
+	/**
+	 * extract the jar file into the system's ClassPath folder
+	 * 
+	 * @param jobid
+	 * @param jarpath
+	 * @return
+	 */
+	public boolean extractJobClassJar(int jobid, String jarpath) {
+		try {
+			JarFile jar = new JarFile(jarpath);
+			Enumeration enums = jar.entries();
+
+			// find the path to which the jar file should be extracted
+			String destDirPath =Utility.getParam("USER_CLASS_PATH") + File.separator + "job" + jobid + File.separator;
+			File destDir = new File(destDirPath);
 			if (!destDir.exists()) {
 				destDir.mkdirs();
 
@@ -206,20 +312,20 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 		return true;
 	}
 
-  /**
-   * get the system's temporary dir which holds mapper's output
-   * 
-   * @return
-   */
-  public static String getSystemTempDir() {
-    String res = Utility.getParam("SYSTEM_TEMP_DIR");
-    if (res.compareTo("") == 0)
-      res = System.getProperty("java.io.tmpdir");
+	/**
+	 * get the system's temporary dir which holds mapper's output
+	 * 
+	 * @return
+	 */
+	public static String getSystemTempDir() {
+		String res = Utility.getParam("SYSTEM_TEMP_DIR");
+		if (res.compareTo("") == 0)
+			res = System.getProperty("java.io.tmpdir");
 
-    File tmpdir = new File(res);
-    if (!tmpdir.exists()) {
-      tmpdir.mkdirs();
-    }
+		File tmpdir = new File(res);
+		if (!tmpdir.exists()) {
+			tmpdir.mkdirs();
+		}
 
     return res;
   }
