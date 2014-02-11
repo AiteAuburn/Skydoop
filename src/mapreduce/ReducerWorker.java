@@ -225,6 +225,10 @@ public class ReducerWorker extends Worker {
       /* exception happens, shut down jvm */
       System.exit(0);
     }
+
+		/*
+		 * create ReducerInputFolder
+
 		/**
 		 * ReducerWorker locate JobTracker rmi server to call its all taskTrackers to sendFile.
 		 */

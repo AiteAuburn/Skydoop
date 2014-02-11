@@ -148,5 +148,4 @@ public abstract class Worker {
    * @return percentage of work already done
    */
   protected abstract float getPercentage();
-
 }
