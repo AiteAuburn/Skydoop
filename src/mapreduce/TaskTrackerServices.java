@@ -155,7 +155,7 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
    *          : the information about the task
    * @return the task is submitted successfully or not
    */
-	public boolean transferFolder(int orderId, Map<Integer, TaskMeta> mapTasks, Map<String, TaskTrackerMeta> tasktrackers, String jobPath) throws RemoteException {
+	public boolean transferFolder(int jid, Map<Integer, TaskMeta> mapTasks, Map<String, TaskTrackerMeta> tasktrackers) throws RemoteException {
 
 		/*
 		 * since tasktracker doesn't distinguish the diff between maptask and reducetasks

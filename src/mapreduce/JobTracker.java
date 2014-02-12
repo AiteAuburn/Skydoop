@@ -146,6 +146,7 @@ public class JobTracker {
     }
   }
 
+
   /**
    * get the whole list of task trackers
    * 
@@ -154,6 +155,7 @@ public class JobTracker {
   public Map<String, TaskTrackerMeta> getTaskTrackers() {
     return Collections.unmodifiableMap(this.tasktrackers);
   }
+
 
   /**
    * retrieve a specific task tracker
@@ -499,6 +501,8 @@ public class JobTracker {
 				return MapStatusChecker.MapStatus.INPROGRESS;
 		}
 
+
+		boolean res = this.servives.
 		// if all map tasks finished, then return FINISHED
 		return MapStatusChecker.MapStatus.FINISHED;
 	}
@@ -649,12 +653,36 @@ public class JobTracker {
     return res;
   }
 
-  public static void main(String[] args) {
-    try {
-      JobTracker jb = new JobTracker(Utility.getParam("JOB_TRACKER_REGISTRY_HOST"),
-              Integer.parseInt(Utility.getParam("REGISTRY_PORT")));
-    } catch (RemoteException e) {
-      e.printStackTrace();
-    }
-  }
+
+	/**
+	 * Folder Transfer recursively.
+	 * @param jid is the ID of the job.
+	 * The method is to transfer tempfiles outputed after map phase, and all
+	 * every taskTracker to call transfer procedure to the reducerworker.
+	 */
+	public boolean transferFolder(int jid) throws RemoteException{
+
+		for(Entry<String, TaskTrackerMeta> entry: this.getTaskTrackers().entrySet()){
+
+			TaskTrackerMeta targetTasktracker = entry.getValue();
+			boolean res = false;
+			try{
+				res = targetTasktracker.getTaskLauncher().transferFolder(jid, getMapTasks(), getTasktrackers());
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			if(res == false) return false;
+		}
+
+		return true;	
+	}
+
+	public static void main(String[] args) {
+		try {
+			JobTracker jb = new JobTracker(Utility.getParam("JOB_TRACKER_REGISTRY_HOST"),
+					Integer.parseInt(Utility.getParam("REGISTRY_PORT")));
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
 }
