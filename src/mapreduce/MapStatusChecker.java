@@ -10,5 +10,4 @@ public interface MapStatusChecker extends Remote {
   };
   
   public MapStatus checkMapStatus(int tid) throws RemoteException;
-  
 }

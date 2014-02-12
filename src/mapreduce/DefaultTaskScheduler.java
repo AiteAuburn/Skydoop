@@ -47,5 +47,4 @@ public class DefaultTaskScheduler implements TaskScheduler {
 
     return result;
   }
-
 }

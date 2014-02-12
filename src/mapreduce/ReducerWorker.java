@@ -232,19 +232,19 @@ public class ReducerWorker extends Worker {
 		/**
 		 * ReducerWorker locate JobTracker rmi server to call its all taskTrackers to sendFile.
 		 */
-    try {
-			String registryHostName = Utility.getParam("JOB_TRACKER_REGISTRY_HOST");
-			int registryPort = Integer.parseInt(Utility.getParam("REGISTRY_PORT"));
-			Registry reg = LocateRegistry.getRegistry(registryHostName, registryPort);
-			FileTransfer ft = (FileTransfer) reg
-				.lookup(Utility.getParam("JOB_TRACKER_SERVICE_NAME"));
-			if(ft.transferFolder(this.orderId) == false)
-				System.exit(0);
-		} catch (Exception e) {
-			e.printStackTrace();
-			/* exception happens, shut down jvm */
-			System.exit(0);
-		}
+/*    try {*/
+			//String registryHostName = Utility.getParam("JOB_TRACKER_REGISTRY_HOST");
+			//int registryPort = Integer.parseInt(Utility.getParam("REGISTRY_PORT"));
+			//Registry reg = LocateRegistry.getRegistry(registryHostName, registryPort);
+			//FileTransfer ft = (FileTransfer) reg
+				//.lookup(Utility.getParam("JOB_TRACKER_SERVICE_NAME"));
+			//if(ft.transferFolder(this.orderId) == false)
+				//System.exit(0);
+		//} catch (Exception e) {
+			//e.printStackTrace();
+			//[> exception happens, shut down jvm <]
+			//System.exit(0);
+		/*}*/
 
 		List<File> result = new ArrayList<File>();
 
