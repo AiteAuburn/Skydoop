@@ -143,11 +143,6 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 		return false;
 	}
 
-	public boolean fileTransfer(int id) throws RemoteException{
-		//Empty method, as no one will call this.	
-		return false;
-	}
-
   /**
    * This method is called by job tracker to assign task to task tracker
    * 
@@ -167,10 +162,10 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 			for(Entry<Integer, TaskProgress> entry: taskStatus.entrySet()){
 				int key = entry.getKey();
 				if(mapTasks.containsKey(key) == true){
-					String taskMapperOutputPath = getSystemTempDir() + File.separator + jobPath 
-							 + "/mapper_output_task_" + key+File.separator+ "part-" + orderId;
+					String taskMapperOutputPath = getSystemTempDir() + File.separator + "/mapper_output_task_" + jid
+							 + "/mapper_output_task_" + key;
 
-					if(sendFile(taskMapperOutputPath, tasktrackers, key) == false)
+					if(sendFiles(taskMapperOutputPath, tasktrackers, key) == false)
 						return false;
 				}
 			}
@@ -178,9 +173,10 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 		return true;
 	}
 
-	public boolean sendFile(String filePath, Map<String, TaskTrackerMeta> tasktrackers, int taskId){
+	public boolean sendFiles(String folderPath, Map<String, TaskTrackerMeta> tasktrackers, int taskId){
 		
-		File file = new File(filePath);
+		try{
+		File file = new File(folderPath);
 		if(!file.exists()) return true;
 
 		/*
@@ -188,57 +184,13 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 		 */
 		for(Entry<String, TaskTrackerMeta> entry: tasktrackers.entrySet()){
 			TaskTrackerMeta ttm = entry.getValue();
-			Socket data=null;
-			Socket msg = null;
-			try {
-				data = new Socket(ttm.tthost, ttm.dataPort);
-				msg = new Socket(ttm.tthost, ttm.msgPort);
-				System.out.println("FileTransferClient listening...");
-			} catch (IOException e) {
-				System.out.println("Could not listen " + e);
-			}
-
-			BufferedReader msgIn = null;
-			PrintWriter msgOut = null;
-
-			try {
-				msgIn = new BufferedReader(new InputStreamReader(msg.getInputStream()));
-				msgOut = new PrintWriter(msg.getOutputStream(), true);
-
-				//---saveFiles is the path for file path in the target machine.
-				String saveFile = getSystemTempDir() + File.separator + "ReducerInput" 
-												  + File.separator + taskId + "-" 
-													+ filePath.charAt(filePath.length()-1);
-
-				msgOut.println("u:" + file.getName() + ":" + saveFile);
-				BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
-				BufferedOutputStream out = new BufferedOutputStream(data.getOutputStream());
-				JobTrackerServices.write(in, out);
-				out.flush();
-				out.close();
-				in.close();
-
-				// TODO issue with waiting for response
-				if (msgIn.readLine().equals("200")) {
-					System.out.println(file.getName() + " received by a TaskTracker.");
-				} else {
-					System.out.println("Unsuccessful send file... Please try again.");
-					return false;
-				}
-
-			} catch (IOException e) {
-				System.out.println(e + "...");
-			} catch (NullPointerException e) {
-				System.out.println(e + "...");
-				e.printStackTrace();
-			} finally {
-				try {
-					data.close();
-					msg.close();
-				} catch (IOException e) {
-					System.out.println(e + "...");
-				}
-			}
+			Runnable aInst = new FolderClient(folderPath, ttm.tthost, ttm.dataPort, ttm.msgPort);
+			Thread t = new Thread(aInst);
+			t.start();
+			t.join();
+		}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 		return true;
 	}
@@ -250,6 +202,7 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 	public void update(Object statuspck) throws RemoteException {
 		if (statuspck.getClass().getName() != TaskProgress.class.getName())
 			return;
+
 		TaskProgress taskProgress = (TaskProgress) statuspck;
 		/* do some logging */
 		System.out.println(System.currentTimeMillis() + " Receive update from worker "

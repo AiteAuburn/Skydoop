@@ -41,18 +41,19 @@ public class FileTransferServer implements Runnable{
 			System.out.println("Could not listen " + e);
 			System.exit(-1);
 		}
+		while(true){
 
-		ClientWorker w;
-		try {
-			w = new ClientWorker(server.accept(), msgServer.accept());
-			//System.out.println("Client accepted.");
-			Thread t = new Thread(w);
-			t.start();
-		} catch (IOException e) {
-			System.out.println("Accept failed " + e);
+			ClientWorker w;
+			try {
+				w = new ClientWorker(server.accept(), msgServer.accept());
+				//System.out.println("Client accepted.");
+				Thread t = new Thread(w);
+				t.start();
+			} catch (IOException e) {
+				System.out.println("Accept failed " + e);
+			}
 		}
 	}
-
 	protected void finalize() {
 		// Objects created in run method are finalised when
 		// program terminates and thread exits
@@ -70,7 +71,6 @@ public class FileTransferServer implements Runnable{
 		//prog.listenSocket();
 	}
 }
-
 
 class ClientWorker implements Runnable {
 	private Socket client;
@@ -134,23 +134,23 @@ class ClientWorker implements Runnable {
 		return ret && path.delete();
 	}
 
-  /**
-   * get the system's temporary dir which holds mapper's output
-   * 
-   * @return
-   */
-  public static String getSystemTempDir() {
-    String res = Utility.getParam("SYSTEM_TEMP_DIR");
-    if (res.compareTo("") == 0)
-      res = System.getProperty("java.io.tmpdir");
+	/**
+	 * get the system's temporary dir which holds mapper's output
+	 * 
+	 * @return
+	 */
+	public static String getSystemTempDir() {
+		String res = Utility.getParam("SYSTEM_TEMP_DIR");
+		if (res.compareTo("") == 0)
+			res = System.getProperty("java.io.tmpdir");
 
-    File tmpdir = new File(res);
-    if (!tmpdir.exists()) {
-      tmpdir.mkdirs();
-    }
+		File tmpdir = new File(res);
+		if (!tmpdir.exists()) {
+			tmpdir.mkdirs();
+		}
 
-    return res;
-  }
+		return res;
+	}
 
 	public void cleanUp() {
 		try {

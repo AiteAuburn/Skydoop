@@ -17,7 +17,5 @@ public interface FileTransfer extends Remote {
 	 * transferFolder is a method which transfers temp files outputed by mapper
 	 * phase to reducerworkers.
 	 */
-
-	public boolean transferFolder(int orderID) throws RemoteException;
-	public boolean transferFolder(int orderID, Map<Integer, TaskMeta> mapTasks, Map<String, TaskMeta> tasktrackers, String jobPath) throws RemoteException;
+	public boolean transferFolder(int orderID, Map<Integer, TaskMeta> mapTasks, Map<String, TaskMeta> tasktrackers) throws RemoteException;
 }

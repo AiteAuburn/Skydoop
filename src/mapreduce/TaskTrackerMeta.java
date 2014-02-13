@@ -17,6 +17,7 @@ public class TaskTrackerMeta {
 	public String tthost;
 	public int dataPort;
 	public int msgPort;
+	public String workDir;
 
 	private long timestamp;
 
@@ -63,6 +64,10 @@ public class TaskTrackerMeta {
 
 	public void setNumOfReducerSlots(int numOfReducerSlots) {
 		this.numOfReducerSlots = numOfReducerSlots;
+	}
+
+	public void setWorkDir(String wordDir){
+		this.workDir= workDir;
 	}
 
 	public Set<Integer> getTasks() {
