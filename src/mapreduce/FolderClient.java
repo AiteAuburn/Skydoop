@@ -18,6 +18,11 @@ import java.net.InetAddress;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * FolderClient is in charge of sending a folder recursively to a target
+ * maching via socket.
+ */
+
 public class FolderClient implements Runnable{
 	
 	File path;
@@ -36,6 +41,9 @@ public class FolderClient implements Runnable{
 		this.listAllFiles(pathsList, path);
 	}
 
+	/**
+	 * @Param host, dataPort, msgPort are all target machine's parameter.
+	 */
 	public FolderClient(String folderPath, String host, int dataPort, int msgPort) throws Exception{
 
 		this.hostname = host;
@@ -47,6 +55,9 @@ public class FolderClient implements Runnable{
 		this.listAllFiles(pathsList, path);
 	}
 
+	/**
+	 * list all files recursively in this folder.
+	 */
 	public void listAllFiles(List<File> pathList, File path) throws Exception{
 		if (!path.exists()) throw new FileNotFoundException(path.getAbsolutePath());
 		if (path.isDirectory()){
@@ -79,7 +90,6 @@ public class FolderClient implements Runnable{
 	}
 
 	public void sendFile(File filename) {
-
 		try {
 			in = new BufferedInputStream(new FileInputStream(filename));
 			out = new BufferedOutputStream(data.getOutputStream());
@@ -115,8 +125,8 @@ public class FolderClient implements Runnable{
 			for(int i=0; i<pathsList.size(); i++){
 
 				try{
-					data = new Socket(InetAddress.getByName(hostname), 4444);
-					msg = new Socket(InetAddress.getByName(hostname), 4445);
+					data = new Socket(hostname, dataPort);
+					msg = new Socket(hostname, msgPort);
 				} catch (IOException e) {
 					System.out.println("Could not listen " + e);
 				}

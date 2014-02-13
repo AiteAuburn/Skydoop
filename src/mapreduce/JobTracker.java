@@ -680,6 +680,10 @@ public class JobTracker {
 
 			TaskTrackerMeta targetTasktracker = entry.getValue();
 			boolean res = false;
+
+			/*
+			 * call tasktrack's rmi interface to let each tasktracker send its all folders.
+			 */
 			try{
 				res = targetTasktracker.getTaskLauncher().transferFolder(jid, getMapTasks(), getTaskTrackers());
 			} catch (Exception e){

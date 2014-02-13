@@ -181,11 +181,10 @@ class ClientWorker implements Runnable {
 					if (cmd[0].equals("u") && cmd[2] != null) {
 
 						//System.out.println("Receiving file from client");
-						String [] div= cmd[2].split("/");
-						String newFileName = getSystemTempDir()+File.separator+div[div.length-1];
 						file = new File(newFileName);
 						receiveFile(file);
 						//System.out.println("after Receiving File");
+
 						// Let client know it has been received
 						msgOut.println("200");
 

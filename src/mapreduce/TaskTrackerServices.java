@@ -144,10 +144,8 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 	}
 
   /**
-   * This method is called by job tracker to assign task to task tracker
+   * This method is called by job tracker to send temp folders to task tracker
    * 
-   * @param taskInfo
-   *          : the information about the task
    * @return the task is submitted successfully or not
    */
 	public boolean transferFolder(int jid, Map<Integer, TaskMeta> mapTasks, Map<String, TaskTrackerMeta> tasktrackers) throws RemoteException {
@@ -165,6 +163,9 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 					String taskMapperOutputPath = getSystemTempDir() + File.separator + "/mapper_output_task_" + jid
 							 + "/mapper_output_task_" + key;
 
+					/*
+					 * send the mapper_output_task_id folder to every tasktracker.
+					 */
 					if(sendFiles(taskMapperOutputPath, tasktrackers, key) == false)
 						return false;
 				}
@@ -180,7 +181,7 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 		if(!file.exists()) return true;
 
 		/*
-		 * if the file (part-X) exist, we send it to all tasktrackers.
+		 * sending the folder specified to all tasktrackers.
 		 */
 		for(Entry<String, TaskTrackerMeta> entry: tasktrackers.entrySet()){
 			TaskTrackerMeta ttm = entry.getValue();
