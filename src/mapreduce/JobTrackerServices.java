@@ -64,6 +64,7 @@ public class JobTrackerServices extends UnicastRemoteObject implements StatusUpd
 					String ttName = taskTrackerPkg.getTaskTrackerName();
 					ttmeta.setDataPort(Utility.getParam(ttName+"_dataPort"));
 					ttmeta.setMsgPort(Utility.getParam(ttName+"_msgPort"));
+					ttmeta.setWorkDir(taskTrackerPkg.workDir);
 					if (this.jobTracker.registerTaskTracker(ttmeta)) {
 						System.err.println("Register successfully");
 					} else {
@@ -204,29 +205,8 @@ public class JobTrackerServices extends UnicastRemoteObject implements StatusUpd
 			return false;
 		}
 
-	/**
-	 * the method is to transfer temp files outputed after mapper phase, and call
-	 * every tasktracker to call transfer procedure to the reducerworker.
-	 */
-	@Override
-		public boolean transferFolder(int orderId) throws RemoteException {
 
-			for(Entry<String, TaskTrackerMeta> entry: jobTracker.getTaskTrackers().entrySet()){
-				
-				TaskTrackerMeta targetTasktracker = entry.getValue();
-				boolean res = false;
-				try{
-					res = targetTasktracker.getTaskLauncher().fileTransfer(orderId);
-				} catch (Exception e){
-					e.printStackTrace();
-				}
-				if(res == false) return false;
-			}
-
-			return true;
-		}
-
-    public boolean transferFolder(int a,Map<Integer,TaskMeta> b,Map<String,TaskMeta> c,String d)
+    public boolean transferFolder(int a,Map<Integer,TaskMeta> b,Map<String,TaskMeta> c)
 				throws RemoteException{
 			//---------Emptry Method, since no one will call it.
 			return true;				

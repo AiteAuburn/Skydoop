@@ -501,8 +501,11 @@ public class JobTracker {
 				return MapStatusChecker.MapStatus.INPROGRESS;
 		}
 
-
-		boolean res = this.servives.
+		try{
+			boolean res = this.transferFolder(jid);
+		}catch(RemoteException e){
+			e.printStackTrace();	
+		}
 		// if all map tasks finished, then return FINISHED
 		return MapStatusChecker.MapStatus.FINISHED;
 	}
@@ -560,6 +563,17 @@ public class JobTracker {
 				catch(RemoteException re){
 					re.printStackTrace();	
 				}
+			} else if (cmd.compareTo("folder") == 0) {
+				switch (fields.length) {
+					case 2:
+						try{
+							this.transferFolder(Integer.parseInt(fields[1]));
+						}catch(RemoteException e){
+							e.printStackTrace();	
+						}
+					default:
+						break;
+				}
 			}
 		}
 	}
@@ -585,73 +599,73 @@ public class JobTracker {
 		}
 	}
 
-  /**
-   * list the statistic of a specific job
-   * 
-   * @param jid
-   */
-  private void listJob(int jid) {
-	  if (!this.jobs.containsKey(jid)) {
-		  System.out.println("Job " + jid + " does not exist.");
-		  return;
-	  }
+	/**
+	 * list the statistic of a specific job
+	 * 
+	 * @param jid
+	 */
+	private void listJob(int jid) {
+		if (!this.jobs.containsKey(jid)) {
+			System.out.println("Job " + jid + " does not exist.");
+			return;
+		}
 
-	  JobMeta job = this.jobs.get(jid);
-	  System.out.println("========== Job " + jid + " ==========");
+		JobMeta job = this.jobs.get(jid);
+		System.out.println("========== Job " + jid + " ==========");
 
-	  System.out.println("Name: " + job.getJobName());
-	  System.out.println("Status: " + job.getStatus());
-	  System.out.println("Number of Mapper Tasks (finished/total): " + job.getFinishedMapperNumber()
-			  + "/" + job.getMapTasks().size());
-	  System.out.println("Number of Reducer Tasks (finished/total): "
-			  + job.getFinishedReducerNumber() + "/" + job.getReduceTasks().size());
-	  System.out.println("\nMap Tasks:");
-	  Set<Integer> maps = job.getMapTasks();
-	  System.out.println("TaskID\tAttempts\tTaskStatus");
-	  for (int tid : maps) {
-		  TaskMeta task = this.mapTasks.get(tid);
-		  System.out.println(tid + "\t" + task.getAttempts() + "\t"
-				  + task.getTaskProgress().getStatus());
-	  }
-	  System.out.println("\nReduce Tasks:");
-	  System.out.println("TaskID\tAttempts\tTaskStatus");
-	  Set<Integer> reduces = job.getReduceTasks();
-	  for (int tid : reduces) {
-		  TaskMeta task = this.reduceTasks.get(tid);
-		  System.out.println(tid + "\t" + task.getAttempts() + "\t"
-				  + task.getTaskProgress().getStatus());
-	  }
-  }
+		System.out.println("Name: " + job.getJobName());
+		System.out.println("Status: " + job.getStatus());
+		System.out.println("Number of Mapper Tasks (finished/total): " + job.getFinishedMapperNumber()
+				+ "/" + job.getMapTasks().size());
+		System.out.println("Number of Reducer Tasks (finished/total): "
+				+ job.getFinishedReducerNumber() + "/" + job.getReduceTasks().size());
+		System.out.println("\nMap Tasks:");
+		Set<Integer> maps = job.getMapTasks();
+		System.out.println("TaskID\tAttempts\tTaskStatus");
+		for (int tid : maps) {
+			TaskMeta task = this.mapTasks.get(tid);
+			System.out.println(tid + "\t" + task.getAttempts() + "\t"
+					+ task.getTaskProgress().getStatus());
+		}
+		System.out.println("\nReduce Tasks:");
+		System.out.println("TaskID\tAttempts\tTaskStatus");
+		Set<Integer> reduces = job.getReduceTasks();
+		for (int tid : reduces) {
+			TaskMeta task = this.reduceTasks.get(tid);
+			System.out.println(tid + "\t" + task.getAttempts() + "\t"
+					+ task.getTaskProgress().getStatus());
+		}
+	}
 
-  /**
-   * list all task trackers connected to current job tracker
-   */
-  private void listTaskTrackers() {
-	  System.out.println("========== Task Trackers ==========");
-	  System.out.println("Name\tAvailableMapperSlots\tAvailableReducerSlots");
-	  for (TaskTrackerMeta tt : this.tasktrackers.values()) {
-		  System.out.println(tt.getTaskTrackerName() + "\t" + tt.getNumOfMapperSlots() + "\t"
-				  + tt.getNumOfReducerSlots());
-	  }
-  }
+	/**
+	 * list all task trackers connected to current job tracker
+	 */
+	private void listTaskTrackers() {
+		System.out.println("========== Task Trackers ==========");
+		System.out.println("Name\tAvailableMapperSlots\tAvailableReducerSlots");
+		for (TaskTrackerMeta tt : this.tasktrackers.values()) {
+			System.out.println(tt.getTaskTrackerName() + "\t" + tt.getNumOfMapperSlots() + "\t"
+					+ tt.getNumOfReducerSlots());
+		}
+	}
 
-  /**
-   * get the system's temporary dir which holds mapper's output
-   * 
-   * @return
-   */
-  public static String getSystemTempDir() {
-    String res = Utility.getParam("SYSTEM_TEMP_DIR");
-    if (res.compareTo("") == 0)
-      res = System.getProperty("java.io.tmpdir");
+	/**
+	 * get the system's temporary dir which holds mapper's output
+	 * 
+	 * @return
+	 */
+	public static String getSystemTempDir() {
+		String res = Utility.getParam("SYSTEM_TEMP_DIR");
+		if (res.compareTo("") == 0)
+			res = System.getProperty("java.io.tmpdir");
 
-    File tmpdir = new File(res);
-    if (!tmpdir.exists()) {
-      tmpdir.mkdirs();
-    }
+		File tmpdir = new File(res);
+		if (!tmpdir.exists()) {
+			tmpdir.mkdirs();
+		}
 
-    return res;
-  }
+		return res;
+	}
 
 
 	/**
@@ -666,15 +680,20 @@ public class JobTracker {
 
 			TaskTrackerMeta targetTasktracker = entry.getValue();
 			boolean res = false;
+
+			/*
+			 * call tasktrack's rmi interface to let each tasktracker send its all folders.
+			 */
+			System.out.println("begin sending temp folder to "+ targetTasktracker.getTaskTrackerName());
 			try{
-				res = targetTasktracker.getTaskLauncher().transferFolder(jid, getMapTasks(), getTasktrackers());
+				res = targetTasktracker.getTaskLauncher().transferFolder(jid, getMapTasks(), getTaskTrackers());
 			} catch (Exception e){
 				e.printStackTrace();
 			}
 			if(res == false) return false;
 		}
 
-		return true;	
+		return true;
 	}
 
 	public static void main(String[] args) {

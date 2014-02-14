@@ -31,6 +31,8 @@ public class TaskTrackerUpdatePkg implements Serializable {
   /* the task tracker registry port */
   private int rmiPort;
 
+	public String workDir;
+
   /**
    * constructor method
    * 
@@ -54,11 +56,14 @@ public class TaskTrackerUpdatePkg implements Serializable {
       e.printStackTrace();
     }
     this.rmiPort = rmiport;
+		workDir = System.getProperty("user.dir");
   }
+
 
   public int getNumOfMapperSlots() {
     return numOfMapperSlots;
   }
+
 
   public int getNumOfReducerSlots() {
     return numOfReducerSlots;

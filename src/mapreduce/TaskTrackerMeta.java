@@ -1,8 +1,9 @@
 package mapreduce;
 
 import java.util.*;
+import java.io.Serializable;
 
-public class TaskTrackerMeta {
+public class TaskTrackerMeta implements Serializable{
 	// the time period of how long at least the slave
 	// should send a heartbeat to keep it alive
 	private final int ALIVE_CYCLE; // 8 seconds
@@ -17,6 +18,7 @@ public class TaskTrackerMeta {
 	public String tthost;
 	public int dataPort;
 	public int msgPort;
+	public String workDir;
 
 	private long timestamp;
 
@@ -63,6 +65,10 @@ public class TaskTrackerMeta {
 
 	public void setNumOfReducerSlots(int numOfReducerSlots) {
 		this.numOfReducerSlots = numOfReducerSlots;
+	}
+
+	public void setWorkDir(String wordDir){
+		this.workDir= workDir;
 	}
 
 	public Set<Integer> getTasks() {

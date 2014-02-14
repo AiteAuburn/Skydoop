@@ -107,6 +107,10 @@ public class TaskTracker {
       e.printStackTrace();
     }
 
+		String dataPort = Utility.getParam(taskTrackerName+"_dataPort");
+		String msgPort = Utility.getParam(taskTrackerName+"_msgPort");
+		Thread server = new Thread(new FileTransferServer(Integer.parseInt(dataPort), Integer.parseInt(msgPort)));
+		server.start();
   }
 
   public TaskOutput runTask(TaskInfo taskinfo) {
@@ -199,11 +203,6 @@ public class TaskTracker {
 	public boolean downloadJar(){
 
 		String Path = Utility.getParam("Jar_Path");
-		String dataPort = Utility.getParam(taskTrackerName+"_dataPort");
-		String msgPort = Utility.getParam(taskTrackerName+"_msgPort");
-
-		Thread server = new Thread(new FileTransferServer(Integer.parseInt(dataPort), Integer.parseInt(msgPort)));
-		server.start();
 
 		if (Path!= null)
 			try {
@@ -212,12 +211,6 @@ public class TaskTracker {
 				e.printStackTrace();
 			}
 
-		try{
-			server.join();
-		}
-		catch(InterruptedException e){
-			e.printStackTrace();
-		}
 		return false;
 	}
 
