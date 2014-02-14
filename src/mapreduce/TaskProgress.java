@@ -62,4 +62,9 @@ public class TaskProgress implements Serializable {
   public TaskMeta.TaskType getType() {
     return this.type;
   }
+
+	public String toString(){
+		
+		return "taskID:"+ taskID+"  type:" + type;
+	}
 }

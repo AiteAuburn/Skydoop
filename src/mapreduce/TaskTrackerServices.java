@@ -49,22 +49,22 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
    */
   public boolean runTask(TaskInfo taskInfo) throws RemoteException {
 
-		while(isJarTransfered == false){
-			isJarTransfered = taskTracker.downloadJar();
-			try{
-				Thread.sleep(1000);
-				System.out.println("it is transferring jar File from jobtracker to tasktracker.");
-			}catch(InterruptedException e){
-				e.printStackTrace();	
-			}
-		}
-		String [] div= Utility.getParam("Jar_Path").split("/");
-		String newFilePath = getSystemTempDir()+File.separator+div[div.length-1];
-		int jobID = taskInfo.getJobID();
-		if( extractJobClassJar(jobID, newFilePath) == false){
-			System.out.println("ExtractJobClassJar doesn't work in this Machine.");	
-			return false;
-		}
+ /*   while(isJarTransfered == false){*/
+			//isJarTransfered = taskTracker.downloadJar();
+			//try{
+				//Thread.sleep(1000);
+				//System.out.println("it is transferring jar File from jobtracker to tasktracker.");
+			//}catch(InterruptedException e){
+				//e.printStackTrace();	
+			//}
+		//}
+		//String [] div= Utility.getParam("Jar_Path").split("/");
+		//String newFilePath = getSystemTempDir()+File.separator+div[div.length-1];
+		//int jobID = taskInfo.getJobID();
+		//if( extractJobClassJar(jobID, newFilePath) == false){
+			//System.out.println("ExtractJobClassJar doesn't work in this Machine.");	
+			//return false;
+		/*}*/
 
 		/* if this is a mapper task */
 		if (taskInfo.getType() == TaskMeta.TaskType.MAPPER) {
@@ -155,35 +155,47 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 		 * we have to refer to jobtrackers' info to differentiate them.
 		 * if mapTasks has the taskID, then, we know this task is a maptask and also in this taskTracker.
 		 */
-		Map<Integer, TaskProgress> taskStatus = this.taskTracker.getTaskStatus();
+		Map<Integer, TaskProgress> taskStatus = this.taskTracker.taskStatusCopy;
 		System.out.println("access transferFoldr");
 
-		String taskMapperOutputPath = getSystemTempDir() + File.separator + "/mapper_output_job_" + jid
-							 + "/mapper_output_task_" + 518;
+		//String taskMapperOutputPath = getSystemTempDir() + File.separator + "/mapper_output_job_" + jid
+							 //+ "/mapper_output_task_" + 518;
+
 
 		/*
 		 * send the mapper_output_task_id folder to every tasktracker.
 		 */
-		if(sendFiles(taskMapperOutputPath, tasktrackers) == false)
-			return false;
+		//if(sendFiles(taskMapperOutputPath, tasktrackers) == false)
+			/*return false;*/
 
- /*   synchronized (taskStatus) {*/
-			//for(Entry<Integer, TaskProgress> entry: taskStatus.entrySet()){
-				//int key = entry.getKey();
-				//System.out.println("entry");
-				//if(mapTasks.containsKey(key) == true){
-					//System.out.println(" key =" + key);
-					//String taskMapperOutputPath = getSystemTempDir() + File.separator + "/mapper_output_job_" + jid
-						//+ "/mapper_output_task_" + key;
+
+		System.out.println("Map<Integer, TaskProgress>########################");
+		for(Entry<Integer, TaskProgress> entry: taskStatus.entrySet()){
+			System.out.println(entry.getKey()+"----"+entry.getValue().toString());
+		}
+
+		System.out.println("Map<Integer, TaskMeta>########################");
+		for(Entry<Integer, TaskMeta> entry: mapTasks.entrySet()){
+			System.out.println(entry.getKey()+"----"+entry.getValue().toString());
+		}
+
+		synchronized (taskStatus) {
+			for(Entry<Integer, TaskProgress> entry: taskStatus.entrySet()){
+				int key = entry.getKey();
+				System.out.println("entry");
+				if(mapTasks.containsKey(key) == true){
+					System.out.println(" key =" + key);
+					String taskMapperOutputPath = getSystemTempDir() + File.separator + "/mapper_output_job_" + jid
+						+ "/mapper_output_task_" + key;
 
 					/*
 					 * send the mapper_output_task_id folder to every tasktracker.
 					 */
-					//if(sendFiles(taskMapperOutputPath, tasktrackers, key) == false)
-						//return false;
-				//}
-			//}
-		/*}*/
+					if(sendFiles(taskMapperOutputPath, tasktrackers) == false)
+						return false;
+				}
+			}
+		}
 		return true;
 	}
 
@@ -192,10 +204,10 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 		try{
 			File file = new File(folderPath);
 			if(!file.exists()) {
-			
 				System.out.println("files doesn't exist");	
 				return true;
 			}
+
 			/*
 			 * sending the folder specified to all tasktrackers.
 			 */
@@ -297,6 +309,6 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 			tmpdir.mkdirs();
 		}
 
-    return res;
-  }
+		return res;
+	}
 }

@@ -60,6 +60,10 @@ public class JobTracker {
 
   // the maximum assigned task id currently
   private int currentMaxTaskId;
+	
+	// only transfer folder once controled by oneTimeTransferFolder.
+	private boolean oneTimeTransferFolder = false;
+
 
   /*****************************************/
 
@@ -503,6 +507,8 @@ public class JobTracker {
 
 		try{
 			boolean res = this.transferFolder(jid);
+			if(res == false)
+				return MapStatusChecker.MapStatus.FAILED;
 		}catch(RemoteException e){
 			e.printStackTrace();	
 		}
@@ -674,27 +680,31 @@ public class JobTracker {
 	 * The method is to transfer tempfiles outputed after map phase, and all
 	 * every taskTracker to call transfer procedure to the reducerworker.
 	 */
-	public boolean transferFolder(int jid) throws RemoteException{
+	public synchronized boolean transferFolder(int jid) throws RemoteException{
 
-		for(Entry<String, TaskTrackerMeta> entry: this.getTaskTrackers().entrySet()){
+		while(oneTimeTransferFolder == false){
+			for(Entry<String, TaskTrackerMeta> entry: this.getTaskTrackers().entrySet()){
 
-			TaskTrackerMeta targetTasktracker = entry.getValue();
-			boolean res = false;
+				TaskTrackerMeta targetTasktracker = entry.getValue();
+				boolean res = false;
 
-			/*
-			 * call tasktrack's rmi interface to let each tasktracker send its all folders.
-			 */
-			System.out.println("begin sending temp folder to "+ targetTasktracker.getTaskTrackerName());
-			try{
-				res = targetTasktracker.getTaskLauncher().transferFolder(jid, getMapTasks(), getTaskTrackers());
-			} catch (Exception e){
-				e.printStackTrace();
+				/*
+				 * call tasktrack's rmi interface to let each tasktracker send its all folders.
+				 */
+				System.out.println("begin sending temp folder to "+ targetTasktracker.getTaskTrackerName());
+				try{
+					res = targetTasktracker.getTaskLauncher().transferFolder(jid, getMapTasks(), getTaskTrackers());
+					oneTimeTransferFolder = true;
+				} catch (Exception e){
+					e.printStackTrace();
+				}
+				if(res == false) return false;
 			}
-			if(res == false) return false;
 		}
 
 		return true;
 	}
+
 
 	public static void main(String[] args) {
 		try {

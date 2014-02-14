@@ -40,6 +40,7 @@ public class TaskTracker {
   private FileTransfer jobTrackerFileTransfer;
 
   private HashMap<Integer, TaskProgress> taskStatus;
+  public HashMap<Integer, TaskProgress> taskStatusCopy;
 
   /* period between heart beat in seconds */
   private final int HEART_BEAT_PERIOD = 2;
@@ -68,6 +69,7 @@ public class TaskTracker {
     this.reducerCounter = new Integer(0);
     /* initiate task status */
     this.taskStatus = new HashMap<Integer, TaskProgress>();
+    this.taskStatusCopy = new HashMap<Integer, TaskProgress>();
 
     /* get the job tracker registry information */
     String registryHostName = Utility.getParam("JOB_TRACKER_REGISTRY_HOST");
@@ -135,6 +137,7 @@ public class TaskTracker {
           for (int id : taskStatus.keySet()) {
             if (taskStatus.get(id).getStatus() != TaskMeta.TaskStatus.INPROGRESS) {
               toDelete.add(id);
+              taskStatusCopy.put(id, taskStatus.get(id));
 
               /* free slots */
               if (taskStatus.get(id).getType() == TaskMeta.TaskType.MAPPER)
