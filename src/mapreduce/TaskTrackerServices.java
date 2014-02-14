@@ -156,40 +156,56 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 		 * if mapTasks has the taskID, then, we know this task is a maptask and also in this taskTracker.
 		 */
 		Map<Integer, TaskProgress> taskStatus = this.taskTracker.getTaskStatus();
-		synchronized (taskStatus) {
-			for(Entry<Integer, TaskProgress> entry: taskStatus.entrySet()){
-				int key = entry.getKey();
-				if(mapTasks.containsKey(key) == true){
-					String taskMapperOutputPath = getSystemTempDir() + File.separator + "/mapper_output_task_" + jid
-							 + "/mapper_output_task_" + key;
+		System.out.println("access transferFoldr");
+
+		String taskMapperOutputPath = getSystemTempDir() + File.separator + "/mapper_output_job_" + jid
+							 + "/mapper_output_task_" + 518;
+
+		/*
+		 * send the mapper_output_task_id folder to every tasktracker.
+		 */
+		if(sendFiles(taskMapperOutputPath, tasktrackers) == false)
+			return false;
+
+ /*   synchronized (taskStatus) {*/
+			//for(Entry<Integer, TaskProgress> entry: taskStatus.entrySet()){
+				//int key = entry.getKey();
+				//System.out.println("entry");
+				//if(mapTasks.containsKey(key) == true){
+					//System.out.println(" key =" + key);
+					//String taskMapperOutputPath = getSystemTempDir() + File.separator + "/mapper_output_job_" + jid
+						//+ "/mapper_output_task_" + key;
 
 					/*
 					 * send the mapper_output_task_id folder to every tasktracker.
 					 */
-					if(sendFiles(taskMapperOutputPath, tasktrackers, key) == false)
-						return false;
-				}
-			}
-		}
+					//if(sendFiles(taskMapperOutputPath, tasktrackers, key) == false)
+						//return false;
+				//}
+			//}
+		/*}*/
 		return true;
 	}
 
-	public boolean sendFiles(String folderPath, Map<String, TaskTrackerMeta> tasktrackers, int taskId){
-		
-		try{
-		File file = new File(folderPath);
-		if(!file.exists()) return true;
+	public boolean sendFiles(String folderPath, Map<String, TaskTrackerMeta> tasktrackers){
 
-		/*
-		 * sending the folder specified to all tasktrackers.
-		 */
-		for(Entry<String, TaskTrackerMeta> entry: tasktrackers.entrySet()){
-			TaskTrackerMeta ttm = entry.getValue();
-			Runnable aInst = new FolderClient(folderPath, ttm.tthost, ttm.dataPort, ttm.msgPort);
-			Thread t = new Thread(aInst);
-			t.start();
-			t.join();
-		}
+		try{
+			File file = new File(folderPath);
+			if(!file.exists()) {
+			
+				System.out.println("files doesn't exist");	
+				return true;
+			}
+			/*
+			 * sending the folder specified to all tasktrackers.
+			 */
+			for(Entry<String, TaskTrackerMeta> entry: tasktrackers.entrySet()){
+				TaskTrackerMeta ttm = entry.getValue();
+				Runnable aInst = new FolderClient(folderPath, ttm.tthost, ttm.dataPort, ttm.msgPort);
+				Thread t = new Thread(aInst);
+				t.start();
+				t.join();
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}

@@ -684,6 +684,7 @@ public class JobTracker {
 			/*
 			 * call tasktrack's rmi interface to let each tasktracker send its all folders.
 			 */
+			System.out.println("begin sending temp folder to "+ targetTasktracker.getTaskTrackerName());
 			try{
 				res = targetTasktracker.getTaskLauncher().transferFolder(jid, getMapTasks(), getTaskTrackers());
 			} catch (Exception e){
@@ -692,7 +693,7 @@ public class JobTracker {
 			if(res == false) return false;
 		}
 
-		return true;	
+		return true;
 	}
 
 	public static void main(String[] args) {

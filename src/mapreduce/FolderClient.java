@@ -136,7 +136,7 @@ public class FolderClient implements Runnable{
 
 				File file = pathsList.get(i);
 				String [] parts = file.getAbsolutePath().split("/");
-				String saveFile = "./ReducerFiles/"+parts[parts.length-2] + parts[parts.length-1];
+				String saveFile = "./tmp/ReducerFiles/"+parts[parts.length-2] + parts[parts.length-1];
 				msgOut.println("u:" + file.getName() + ":" + saveFile);
 				sendFile(file);
 

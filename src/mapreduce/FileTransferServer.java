@@ -181,7 +181,7 @@ class ClientWorker implements Runnable {
 					if (cmd[0].equals("u") && cmd[2] != null) {
 
 						//System.out.println("Receiving file from client");
-						file = new File(newFileName);
+						file = new File(cmd[2]);
 						receiveFile(file);
 						//System.out.println("after Receiving File");
 
