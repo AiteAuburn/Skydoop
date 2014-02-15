@@ -173,7 +173,8 @@ public class JobTrackerServices extends UnicastRemoteObject implements StatusUpd
 				msgOut = new PrintWriter(msg.getOutputStream(), true);
 
 				File file = new File(path);
-				String saveFile = path;
+				String [] div = path.split("/");
+				String saveFile = "./tmp/" + div[div.length-1];
 				msgOut.println("u:" + file.getName() + ":" + saveFile);
 				BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
 				BufferedOutputStream out = new BufferedOutputStream(data.getOutputStream());

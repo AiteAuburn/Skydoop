@@ -17,7 +17,7 @@ public class Main {
     jconf.setOutputPath(args[1]);
     jconf.setJarFilePath(args[2]);
     
-    jconf.setBlockSize(100000);
+    jconf.setBlockSize(5000000);
     
     jconf.setMapperClassName("example.wordcount.WCMapper");
     jconf.setReducerClassName("example.wordcount.WCReducer");
@@ -31,5 +31,4 @@ public class Main {
     Job job = new Job(jconf);
     job.run();
   }
-
 }

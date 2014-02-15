@@ -64,7 +64,6 @@ public class JobTracker {
 	// only transfer folder once controled by oneTimeTransferFolder.
 	private boolean oneTimeTransferFolder = false;
 
-
   /*****************************************/
 
   public JobTracker(String rh, int rp) throws RemoteException {

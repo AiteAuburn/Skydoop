@@ -204,7 +204,6 @@ public class TaskTracker {
 	 * It will wait until server.join() .
 	 */
 	public boolean downloadJar(){
-
 		String Path = Utility.getParam("Jar_Path");
 
 		if (Path!= null)
@@ -213,7 +212,6 @@ public class TaskTracker {
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
-
 		return false;
 	}
 

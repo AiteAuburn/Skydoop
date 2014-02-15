@@ -49,22 +49,24 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
    */
   public boolean runTask(TaskInfo taskInfo) throws RemoteException {
 
- /*   while(isJarTransfered == false){*/
-			//isJarTransfered = taskTracker.downloadJar();
-			//try{
-				//Thread.sleep(1000);
-				//System.out.println("it is transferring jar File from jobtracker to tasktracker.");
-			//}catch(InterruptedException e){
-				//e.printStackTrace();	
-			//}
-		//}
-		//String [] div= Utility.getParam("Jar_Path").split("/");
-		//String newFilePath = getSystemTempDir()+File.separator+div[div.length-1];
-		//int jobID = taskInfo.getJobID();
-		//if( extractJobClassJar(jobID, newFilePath) == false){
-			//System.out.println("ExtractJobClassJar doesn't work in this Machine.");	
-			//return false;
-		/*}*/
+		synchronized(this){
+			while(isJarTransfered == false){
+				isJarTransfered = taskTracker.downloadJar();
+				try{
+					Thread.sleep(1000);
+					System.out.println("it is transferring jar File from jobtracker to tasktracker.");
+				}catch(InterruptedException e){
+					e.printStackTrace();	
+				}
+				String [] div= Utility.getParam("Jar_Path").split("/");
+				String newFilePath = getSystemTempDir()+File.separator+div[div.length-1];
+				int jobID = taskInfo.getJobID();
+				if( extractJobClassJar(jobID, newFilePath) == false){
+					System.out.println("ExtractJobClassJar doesn't work in this Machine.");	
+					return false;
+				}
+			}
+		}
 
 		/* if this is a mapper task */
 		if (taskInfo.getType() == TaskMeta.TaskType.MAPPER) {
@@ -143,11 +145,11 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 		return false;
 	}
 
-  /**
-   * This method is called by job tracker to send temp folders to task tracker
-   * 
-   * @return the task is submitted successfully or not
-   */
+	/**
+	 * This method is called by job tracker to send temp folders to task tracker
+	 * 
+	 * @return the task is submitted successfully or not
+	 */
 	public boolean transferFolder(int jid, Map<Integer, TaskMeta> mapTasks, Map<String, TaskTrackerMeta> tasktrackers) throws RemoteException {
 
 		/*
@@ -159,14 +161,14 @@ public class TaskTrackerServices extends UnicastRemoteObject implements TaskLaun
 		System.out.println("access transferFoldr");
 
 		//String taskMapperOutputPath = getSystemTempDir() + File.separator + "/mapper_output_job_" + jid
-							 //+ "/mapper_output_task_" + 518;
+		//+ "/mapper_output_task_" + 518;
 
 
 		/*
 		 * send the mapper_output_task_id folder to every tasktracker.
 		 */
 		//if(sendFiles(taskMapperOutputPath, tasktrackers) == false)
-			/*return false;*/
+		/*return false;*/
 
 
 		System.out.println("Map<Integer, TaskProgress>########################");
