@@ -1,5 +1,7 @@
 package mapreduce;
-public class TaskMeta {
+import java.io.Serializable;
+
+public class TaskMeta implements Serializable{
   
   public enum TaskStatus {
     INIT, INPROGRESS, FAILED, SUCCEED
@@ -94,4 +96,8 @@ public class TaskMeta {
   public int getAttempts() {
     return this.attempts;
   }
+
+	public String toString(){
+		return "taskId:"+taskID+"  jobId:"+jobID;
+	}
 }
