@@ -415,6 +415,7 @@ public class JobTracker {
 		Map<Integer, TaskMeta> mapTasks = new HashMap<Integer, TaskMeta>();
 		Map<Integer, TaskMeta> reduceTasks = new HashMap<Integer, TaskMeta>();
 
+		int mapTaskNum = 0, redTaskNum = 0;
 		// create new map tasks for this job
 		for (JobMeta.InputBlock block : blocks) {
 			int taskid = this.requestTaskId();
@@ -427,6 +428,7 @@ public class JobTracker {
 
 			mapTasks.put(taskid, mtask);
 			newjob.addMapperTask(taskid);
+			mapTaskNum++;
 		}
 
 		// create new reduce tasks for this job
@@ -441,8 +443,10 @@ public class JobTracker {
 
 			reduceTasks.put(taskid, rtask);
 			newjob.addReducerTask(taskid);
+			redTaskNum++;
 		}
 
+		System.out.println("mapTaskNum="+ mapTaskNum + "  redTaskNum="+ redTaskNum);
 		// submit these tasks into the system
 		this.mapTasks.putAll(mapTasks);
 		this.reduceTasks.putAll(reduceTasks);
@@ -680,7 +684,6 @@ public class JobTracker {
 	 * every taskTracker to call transfer procedure to the reducerworker.
 	 */
 	public synchronized boolean transferFolder(int jid) throws RemoteException{
-
 		while(oneTimeTransferFolder == false){
 			for(Entry<String, TaskTrackerMeta> entry: this.getTaskTrackers().entrySet()){
 
