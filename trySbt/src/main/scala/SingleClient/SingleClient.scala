@@ -42,5 +42,4 @@ object SingleClient extends App{
 			}
 		}
 	}
-
 }

@@ -42,9 +42,8 @@ object DrawCurve{
 	}
 
 
-
 	def main(args: Array[String]) {
 		val objSet = getObjSet();
+		val itemList = Util.getItemList(objSet);
 	}
-
 }
