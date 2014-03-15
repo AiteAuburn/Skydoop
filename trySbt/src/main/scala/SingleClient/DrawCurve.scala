@@ -7,6 +7,12 @@ import java.io.File
 import scala.collection.mutable.HashSet
 import scala.io.Source
 
+import java.util.ArrayList
+import ProbSkyline.DataStructures._
+
+import scala.collection.immutable.List
+import ProbSkyline.GraphingData
+
 object DrawCurve{
 
 	val CC = ClusterConfig.getInstance()
@@ -41,10 +47,21 @@ object DrawCurve{
 		}
 	}
 
+	def itemToInst(itemList: List[item]) = {
+		var arr: ArrayList[instance] = new ArrayList[instance] ()
+		for(obj <- itemList)
+			for(i<- 0 until obj.instances.size())
+				arr.add(obj.instances.get(i))
+		arr
+	}
 
 
 	def main(args: Array[String]) {
 		val objSet = getObjSet();
-	}
+		val itemList = Util.getItemList(objSet);
 
+		val arr = itemToInst(itemList)
+		val draw = new GraphingData(arr)
+		draw.run()
+	}
 }
