@@ -23,9 +23,10 @@ object Util{
 	def getItemList(objSet: HashSet[Int]) ={
 
 		var aMap = new HashMap[Integer, item]();
+		val pm = new PartitionMain()
 		for(line <- Source.fromFile(CC.srcName + ".txt").getLines()){
 
-			val curr = PartitionMain.stringToInstance(line);
+			val curr = pm.stringToInstance(line);
 			if(objSet.contains(curr.objectID)){
 				if(!aMap.contains(curr.objectID)){
 					val aItem = new item(curr.objectID);              
@@ -37,5 +38,4 @@ object Util{
 		val itemList = aMap.values.toList
 		itemList
 	}
-
 }

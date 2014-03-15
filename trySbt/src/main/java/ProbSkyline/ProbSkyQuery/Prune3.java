@@ -82,7 +82,7 @@ public class Prune3 extends PruneBase{
 				instance aInst = curr.instances.get(j);
 				objSkyProb += aInst.prob * aInst.instSkyProb;
 			}
-			if(objSkyProb > 0){
+			if(objSkyProb > super.CC.threshold + 0.1){
 				retMap.put(curr.objectID, objSkyProb);
 				// System.out.println("objectID="+curr.objectID + " prob="+objSkyProb);
 				bw.write(Integer.toString(curr.objectID) + "\n");

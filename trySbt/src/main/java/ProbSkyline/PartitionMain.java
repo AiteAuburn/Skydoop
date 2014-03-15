@@ -30,14 +30,14 @@ public class PartitionMain{
 		this.CC= ClusterConfig.getInstance();	
 	}
 
-	public static instance stringToInstance(String instString){
+	public instance stringToInstance(String instString){
 
 		String [] div = instString.split(" ");
 		instance inst = null;
-		if(div.length == getCC().dim+3){
+		if(div.length == CC.dim+3){
 
-			inst= new instance(Util.getInstID(div[1]), Util.getObjectID(div[0]), Util.getProb(div[div.length-1]), getCC().dim);
-			inst.setPoint(Util.getPoint(div, getCC().dim));
+			inst= new instance(Util.getInstID(div[1]), Util.getObjectID(div[0]), Util.getProb(div[div.length-1]), CC.dim);
+			inst.setPoint(Util.getPoint(div, CC.dim));
 		}
 		else
 			System.out.println("Sth Wrong in creating instance.");
@@ -101,5 +101,4 @@ public class PartitionMain{
 		else
 			System.out.println("Sth Wrong in retrieving itemList in getItemList");
 	}
-
 }

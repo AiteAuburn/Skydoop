@@ -1,3 +1,5 @@
+package ProbSkyline;
+
 import java.awt.*;
 import java.awt.font.*;
 import java.awt.geom.*;
@@ -17,6 +19,15 @@ public class GraphingData extends JPanel {
 
     public GraphingData(List<instance> instList){
         this.instList = instList;
+    }
+
+    public void run(){
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.add(this);
+        f.setSize(400,400);
+        f.setLocation(200,200);
+        f.setVisible(true);
     }
 
     protected void paintComponent(Graphics g) {
@@ -58,8 +69,8 @@ public class GraphingData extends JPanel {
         // Mark data points.
         g2.setPaint(Color.red);
         for(int i = 0; i < instList.size(); i++) {
-            double x = PAD + scale*instList.get(i).a_point.__coordinates[0];
-            double y = h - PAD - scale*instList.get(i).a_point.__coordinates[1];
+            double x = PAD+5 + scale*instList.get(i).a_point.__coordinates[0];
+            double y = h - PAD-5 - scale*instList.get(i).a_point.__coordinates[1];
             g2.fill(new Ellipse2D.Double(x-2, y-2, 4, 4));
         }
 
